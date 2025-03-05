@@ -2,12 +2,12 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Georgia", serif; /* Fonte mais clássica, típica de Itália */
+    font-family: "Georgia", serif;
 }
 
 body {
-    background: #D2B48C; /* Bege/madeira como fundo principal */
-    color: #333333; /* Texto em cinza escuro para legibilidade */
+    background: #D2B48C;
+    color: #333333;
     padding: 70px 5px 5px 5px;
     line-height: 1.6;
 }
@@ -18,8 +18,8 @@ body {
 }
 
 header {
-    background: linear-gradient(45deg, #FF6347, #FF4500); /* Vermelho italiano */
-    color: #F5F5F5; /* Branco cremoso */
+    background: linear-gradient(45deg, #FF6347, #FF4500);
+    color: #F5F5F5;
     padding: 0.8rem;
     display: flex;
     justify-content: space-between;
@@ -44,12 +44,12 @@ header {
     height: 70px;
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid #6B8E23; /* Verde oliva na borda */
+    border: 2px solid #6B8E23;
 }
 
 #pizzaria-name {
     font-size: 2rem;
-    font-style: italic; /* Estilo italiano */
+    font-style: italic;
 }
 
 .navbar {
@@ -87,13 +87,13 @@ header {
 
 .navbar a:hover,
 .navbar a.active {
-    background: rgba(107, 142, 35, 0.8); /* Verde oliva com transparência */
+    background: rgba(107, 142, 35, 0.8);
 }
 
 .cart-icon {
     cursor: pointer;
     padding: 6px;
-    background: rgba(245, 245, 245, 0.2); /* Branco cremoso com transparência */
+    background: rgba(245, 245, 245, 0.2);
     border-radius: 50%;
     transition: transform 0.3s ease, background 0.3s ease;
     margin-left: 5px;
@@ -115,7 +115,7 @@ header {
 
 .cart-icon:hover,
 .admin-icon:hover {
-    background: #6B8E23; /* Verde oliva */
+    background: #6B8E23;
     transform: scale(1.1);
 }
 
@@ -126,7 +126,7 @@ header {
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    background: #F5F5F5; /* Branco cremoso como fundo */
+    background: #F5F5F5;
 }
 
 .carousel-container {
@@ -148,7 +148,7 @@ header {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(107, 142, 35, 0.7); /* Verde oliva */
+    background: rgba(107, 142, 35, 0.7);
     color: #F5F5F5;
     border: none;
     padding: 8px;
@@ -158,7 +158,7 @@ header {
 }
 
 .carousel-btn:hover {
-    background: #FF6347; /* Vermelho italiano */
+    background: #FF6347;
 }
 
 .carousel-btn.prev {
@@ -172,7 +172,7 @@ header {
 .custom-pizza-btn {
     display: block;
     margin: 20px auto;
-    background: linear-gradient(45deg, #FF6347, #FF4500); /* Vermelho italiano */
+    background: linear-gradient(45deg, #FF6347, #FF4500);
     color: #F5F5F5;
     border: none;
     padding: 10px 20px;
@@ -186,7 +186,7 @@ header {
 
 .custom-pizza-btn:hover {
     transform: scale(1.1);
-    background: #6B8E23; /* Verde oliva */
+    background: #6B8E23;
 }
 
 .products-grid {
@@ -198,13 +198,13 @@ header {
 }
 
 .product-card {
-    background: #F5F5F5; /* Branco cremoso */
+    background: #F5F5F5;
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     text-align: center;
     transition: transform 0.4s ease;
-    border: 1px solid #D2B48C; /* Bege/madeira */
+    border: 1px solid #D2B48C;
 }
 
 .product-card:hover {
@@ -218,7 +218,7 @@ header {
     border-radius: 8px;
     cursor: pointer;
     transition: transform 0.3s ease;
-    border: 2px solid #6B8E23; /* Verde oliva */
+    border: 2px solid #6B8E23;
 }
 
 .product-card img:hover {
@@ -232,7 +232,7 @@ header {
 }
 
 .product-card button {
-    background: linear-gradient(45deg, #FF6347, #FF4500); /* Vermelho italiano */
+    background: linear-gradient(45deg, #FF6347, #FF4500);
     color: #F5F5F5;
     border: none;
     padding: 10px 20px;
@@ -244,7 +244,7 @@ header {
 
 .product-card button:hover {
     transform: scale(1.1);
-    background: #6B8E23; /* Verde oliva */
+    background: #6B8E23;
 }
 
 .cart-modal {
@@ -266,7 +266,7 @@ header {
 }
 
 .cart-content {
-    background: linear-gradient(135deg, #FF6347, #FF4500); /* Vermelho italiano */
+    background: linear-gradient(135deg, #FF6347, #FF4500);
     color: #F5F5F5;
     width: 100%;
     max-width: 300px;
@@ -317,15 +317,15 @@ header {
 }
 
 .cart-item .flavor-item:nth-child(1) .flavor-name {
-    color: #FFD700; /* Amarelo para destacar */
+    color: #FFD700;
 }
 
 .cart-item .flavor-item:nth-child(2) .flavor-name {
-    color: #FF4500; /* Vermelho mais escuro */
+    color: #FF4500;
 }
 
 .cart-item .flavor-item:nth-child(3) .flavor-name {
-    color: #6B8E23; /* Verde oliva */
+    color: #6B8E23;
 }
 
 .cart-item .flavor-item:nth-child(4) .flavor-name {
@@ -333,7 +333,7 @@ header {
 }
 
 .cart-item .flavor-item:nth-child(n+5) .flavor-name {
-    color: #D2B48C; /* Bege */
+    color: #D2B48C;
 }
 
 .cart-item .flavor-name {
@@ -341,7 +341,7 @@ header {
 }
 
 .cart-item button {
-    background: #FF4500; /* Vermelho escuro */
+    background: #FF4500;
     border: none;
     padding: 4px 8px;
     border-radius: 5px;
@@ -354,12 +354,12 @@ header {
 
 .cart-item button:hover {
     transform: scale(1.1);
-    background: #6B8E23; /* Verde oliva */
+    background: #6B8E23;
 }
 
 .checkout-btn {
     width: 100%;
-    background: linear-gradient(45deg, #6B8E23, #556B2F); /* Verde oliva */
+    background: linear-gradient(45deg, #6B8E23, #556B2F);
     color: #F5F5F5;
     border: none;
     padding: 8px;
@@ -386,7 +386,7 @@ header {
 }
 
 .custom-pizza-content {
-    background: linear-gradient(135deg, #FF6347, #FF4500); /* Vermelho italiano */
+    background: linear-gradient(135deg, #FF6347, #FF4500);
     color: #F5F5F5;
     width: 90%;
     max-width: 400px;
@@ -449,7 +449,7 @@ header {
 }
 
 #pizza-svg path:hover {
-    fill: #FF4500; /* Vermelho escuro */
+    fill: #FF4500;
     stroke: #F5F5F5;
     stroke-width: 4;
 }
@@ -469,7 +469,7 @@ header {
 }
 
 .custom-pizza-content button {
-    background: linear-gradient(45deg, #FF6347, #FF4500); /* Vermelho italiano */
+    background: linear-gradient(45deg, #FF6347, #FF4500);
     color: #F5F5F5;
     border: none;
     padding: 10px 20px;
@@ -482,7 +482,7 @@ header {
 
 .custom-pizza-content button:hover {
     transform: scale(1.05);
-    background: #6B8E23; /* Verde oliva */
+    background: #6B8E23;
 }
 
 .description-modal {
@@ -504,7 +504,7 @@ header {
 }
 
 .description-content {
-    background: linear-gradient(135deg, #FF6347, #FF4500); /* Vermelho italiano */
+    background: linear-gradient(135deg, #FF6347, #FF4500);
     color: #F5F5F5;
     width: 90%;
     max-width: 450px;
@@ -557,7 +557,7 @@ header {
 }
 
 .description-content button {
-    background: linear-gradient(45deg, #FF6347, #FF4500); /* Vermelho italiano */
+    background: linear-gradient(45deg, #FF6347, #FF4500);
     color: #F5F5F5;
     border: none;
     padding: 10px 20px;
@@ -570,7 +570,7 @@ header {
 
 .description-content button:hover {
     transform: scale(1.05);
-    background: #6B8E23; /* Verde oliva */
+    background: #6B8E23;
 }
 
 .admin-modal {
@@ -592,7 +592,7 @@ header {
 }
 
 .admin-content {
-    background: linear-gradient(135deg, #FF6347, #FF4500); /* Vermelho italiano */
+    background: linear-gradient(135deg, #FF6347, #FF4500);
     color: #F5F5F5;
     width: 90%;
     max-width: 500px;
@@ -660,17 +660,17 @@ header {
 }
 
 .product-admin-item button.edit-btn {
-    background: #6B8E23; /* Verde oliva */
+    background: #6B8E23;
 }
 
 .product-admin-item button:hover,
 .carousel-admin-item button:hover {
     transform: scale(1.1);
-    background: #D2B48C; /* Bege */
+    background: #D2B48C;
 }
 
 .product-admin-item button.edit-btn:hover {
-    background: #556B2F; /* Verde mais escuro */
+    background: #556B2F;
 }
 
 .admin-form input,
@@ -693,7 +693,7 @@ header {
 
 .admin-form button,
 .admin-login button {
-    background: linear-gradient(45deg, #6B8E23, #556B2F); /* Verde oliva */
+    background: linear-gradient(45deg, #6B8E23, #556B2F);
     color: #F5F5F5;
     border: none;
     padding: 10px;
@@ -706,7 +706,7 @@ header {
 .admin-form button:hover,
 .admin-login button:hover {
     transform: scale(1.05);
-    background: #FF6347; /* Vermelho italiano */
+    background: #FF6347;
 }
 
 .close-custom,
@@ -749,7 +749,7 @@ header {
 }
 
 .checkout-content {
-    background: linear-gradient(135deg, #FF6347, #FF4500); /* Vermelho italiano */
+    background: linear-gradient(135deg, #FF6347, #FF4500);
     color: #F5F5F5;
     width: 90%;
     max-width: 400px;
@@ -781,7 +781,7 @@ header {
 }
 
 .checkout-content button {
-    background: linear-gradient(45deg, #6B8E23, #556B2F); /* Verde oliva */
+    background: linear-gradient(45deg, #6B8E23, #556B2F);
     color: #F5F5F5;
     border: none;
     padding: 10px 20px;
@@ -794,7 +794,7 @@ header {
 
 .checkout-content button:hover {
     transform: scale(1.05);
-    background: #FF6347; /* Vermelho italiano */
+    background: #FF6347;
 }
 
 .close-checkout {
@@ -820,7 +820,7 @@ header {
 
 #whatsapp-display {
     font-weight: bold;
-    color: #D2B48C; /* Bege */
+    color: #D2B48C;
 }
 
 /* Media Queries para Responsividade */
