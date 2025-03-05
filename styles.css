@@ -64,6 +64,11 @@ header {
     cursor: pointer;
     padding: 5px;
     color: #F5F5F5;
+    transition: transform 0.3s ease;
+}
+
+.hamburger:hover {
+    transform: scale(1.1);
 }
 
 .navbar ul {
@@ -82,12 +87,19 @@ header {
     font-size: 1rem;
     padding: 5px 10px;
     border-radius: 5px;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
 }
 
-.navbar a:hover,
-.navbar a.active {
+.navbar a:hover {
     background: rgba(107, 142, 35, 0.8);
+    box-shadow: 0 0 10px rgba(107, 142, 35, 0.5);
+    transform: translateY(-2px);
+}
+
+.navbar a.active {
+    background: #6B8E23;
+    box-shadow: 0 0 15px rgba(107, 142, 35, 0.7);
+    transform: scale(1.05);
 }
 
 .cart-icon {
@@ -187,6 +199,14 @@ header {
 .custom-pizza-btn:hover {
     transform: scale(1.1);
     background: #6B8E23;
+}
+
+#fixed-custom-pizza-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    margin: 0;
 }
 
 .products-grid {
@@ -858,10 +878,25 @@ header {
         background: linear-gradient(45deg, #FF6347, #FF4500);
         padding: 10px 0;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        transform: translateY(-100%);
+        transition: transform 0.3s ease-in-out;
     }
 
     .navbar ul.show {
         display: flex;
+        transform: translateY(0);
+        animation: slideDown 0.3s ease-in-out forwards;
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
     }
 
     .navbar a {
