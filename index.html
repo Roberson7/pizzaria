@@ -28,7 +28,7 @@
             <button class="carousel-btn prev" onclick="prevSlide()">❮</button>
             <button class="carousel-btn next" onclick="nextSlide()">❯</button>
         </div>
-        <button class="custom-pizza-btn" onclick="openCustomPizzaModal()">Monte sua Pizza</button>
+        <button id="fixed-custom-pizza-btn" class="custom-pizza-btn" onclick="openCustomPizzaModal()">Monte sua Pizza</button>
         <div class="products-grid" id="products"></div>
     </div>
 
@@ -60,7 +60,7 @@
                 <option value="4">4 Sabores</option>
                 <option value="8">8 Fatias</option>
             </select>
-            <svg id="pizza-svg" width="300" height="300"></svg>
+            <svg id="pizza-svg"></svg>
             <select id="flavor-select"></select>
             <img id="selected-flavor-image" src="" alt="Pizza Selecionada" style="display: none; max-width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin: 10px auto;">
             <button onclick="addCustomPizzaToCart()">Adicionar ao Carrinho</button>
@@ -91,6 +91,17 @@
                 <input type="text" id="whatsapp-number-input" placeholder="Número do WhatsApp (ex: 5511999999999)">
                 <button onclick="updateWhatsappNumber()">Salvar Número do WhatsApp</button>
                 <p id="current-whatsapp">Número atual: <span id="whatsapp-display">Nenhum configurado</span></p>
+
+                <h3>Link de Divulgação</h3>
+                <button onclick="generateShareLink()">Gerar Link de Divulgação</button>
+                <p id="share-link-display">Link: <span id="share-link">Nenhum gerado ainda</span></p>
+                <button id="copy-share-link" style="display: none;" onclick="copyShareLink()">Copiar Link</button>
+
+                <h3>Alterar Senha do Administrador</h3>
+                <input type="password" id="current-password" placeholder="Senha Atual">
+                <input type="password" id="new-password" placeholder="Nova Senha">
+                <input type="password" id="confirm-password" placeholder="Confirme a Nova Senha">
+                <button onclick="changeAdminPassword()">Alterar Senha</button>
 
                 <h3>Gerenciar Carrossel</h3>
                 <input type="text" id="carousel-image-input" placeholder="URL da Imagem do Carrossel">
