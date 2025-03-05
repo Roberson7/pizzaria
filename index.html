@@ -1,205 +1,140 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pizzaria</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzaria Italiana</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
     <header>
-      <div class="logo-container">
-        <img
-          id="pizzaria-logo"
-          src="https://via.placeholder.com/50"
-          alt="Logo"
-        />
-        <span id="pizzaria-name">Pizzaria</span>
-      </div>
-      <nav class="navbar">
-        <span class="hamburger" onclick="toggleMenu()">☰</span>
-        <ul id="nav-list"></ul>
-      </nav>
-      <div>
-        <span class="cart-icon" onclick="toggleCart()"
-          >🛒 <span id="cart-count">0</span></span
-        >
-        <span class="admin-icon" onclick="openAdminModal()">👤</span>
-      </div>
+        <div class="logo-container">
+            <img id="pizzaria-logo" src="https://via.placeholder.com/50" alt="Logo">
+            <span id="pizzaria-name">Pizzaria Italiana</span>
+        </div>
+        <nav class="navbar">
+            <span class="hamburger" onclick="toggleMenu()">☰</span>
+            <ul id="nav-list"></ul>
+        </nav>
+        <div>
+            <span class="cart-icon" onclick="toggleCart()">🛒 <span id="cart-count">0</span></span>
+            <span class="admin-icon" onclick="openAdminModal()">👤</span>
+        </div>
     </header>
 
     <div class="container">
-      <div class="carousel">
-        <div class="carousel-container" id="carousel-container"></div>
-        <button class="carousel-btn prev" onclick="prevSlide()">❮</button>
-        <button class="carousel-btn next" onclick="nextSlide()">❯</button>
-      </div>
-      <button class="custom-pizza-btn" onclick="openCustomPizzaModal()">
-        Monte sua Pizza
-      </button>
-      <div class="products-grid" id="products"></div>
+        <div class="carousel">
+            <div class="carousel-container" id="carousel-container"></div>
+            <button class="carousel-btn prev" onclick="prevSlide()">❮</button>
+            <button class="carousel-btn next" onclick="nextSlide()">❯</button>
+        </div>
+        <button class="custom-pizza-btn" onclick="openCustomPizzaModal()">Monte sua Pizza</button>
+        <div class="products-grid" id="products"></div>
     </div>
 
     <!-- Cart Modal -->
     <div class="cart-modal" id="cart-modal">
-      <div class="cart-content">
-        <span class="close-cart" onclick="toggleCart()">×</span>
-        <h2>Carrinho</h2>
-        <div id="cart-items"></div>
-        <p id="cart-total">Total: R$ 0,00</p>
-        <button class="checkout-btn" onclick="openCheckoutModal()">
-          Finalizar Pedido
-        </button>
-      </div>
+        <div class="cart-content">
+            <span class="close-cart" onclick="toggleCart()">×</span>
+            <h2>Carrinho</h2>
+            <div id="cart-items"></div>
+            <p id="cart-total">Total: R$ 0,00</p>
+            <button class="checkout-btn" onclick="openCheckoutModal()">Finalizar Pedido</button>
+        </div>
     </div>
 
     <!-- Custom Pizza Modal -->
     <div class="custom-pizza-modal" id="custom-pizza-modal">
-      <div class="custom-pizza-content">
-        <span class="close-custom" onclick="closeCustomPizzaModal()">×</span>
-        <h2>Monte sua Pizza</h2>
-        <div class="instructions">
-          <p>Passo 1: Escolha quantos sabores você quer.</p>
-          <p>Passo 2: Clique em uma fatia da pizza abaixo.</p>
-          <p>Passo 3: Escolha o sabor para essa fatia.</p>
-          <p>Passo 4: Repita até completar e adicione ao carrinho!</p>
+        <div class="custom-pizza-content">
+            <span class="close-custom" onclick="closeCustomPizzaModal()">×</span>
+            <h2>Monte sua Pizza</h2>
+            <div class="instructions">
+                <p>Passo 1: Escolha quantos sabores você quer.</p>
+                <p>Passo 2: Clique em uma fatia da pizza abaixo.</p>
+                <p>Passo 3: Escolha o sabor para essa fatia.</p>
+                <p>Passo 4: Repita até completar e adicione ao carrinho!</p>
+            </div>
+            <select id="flavor-count">
+                <option value="2">2 Sabores</option>
+                <option value="3">3 Sabores</option>
+                <option value="4">4 Sabores</option>
+                <option value="8">8 Fatias</option>
+            </select>
+            <svg id="pizza-svg" width="300" height="300"></svg>
+            <select id="flavor-select"></select>
+            <img id="selected-flavor-image" src="" alt="Pizza Selecionada" style="display: none; max-width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin: 10px auto;">
+            <button onclick="addCustomPizzaToCart()">Adicionar ao Carrinho</button>
         </div>
-        <select id="flavor-count">
-          <option value="2">2 Sabores</option>
-          <option value="3">3 Sabores</option>
-          <option value="4">4 Sabores</option>
-          <option value="8">8 Fatias</option>
-        </select>
-        <svg id="pizza-svg" width="300" height="300"></svg>
-        <select id="flavor-select"></select>
-        <img
-          id="selected-flavor-image"
-          src=""
-          alt="Pizza Selecionada"
-          style="
-            display: none;
-            max-width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin: 10px auto;
-          "
-        />
-        <button onclick="addCustomPizzaToCart()">Adicionar ao Carrinho</button>
-      </div>
     </div>
 
     <!-- Description Modal -->
     <div class="description-modal" id="description-modal">
-      <div class="description-content" id="description-content"></div>
+        <div class="description-content" id="description-content"></div>
     </div>
 
     <!-- Admin Modal -->
     <div class="admin-modal" id="admin-modal">
-      <div class="admin-content" id="admin-panel">
-        <span class="close-admin" onclick="closeAdminModal()">×</span>
-        <h2>Painel Administrativo</h2>
-        <div class="admin-login" id="admin-login">
-          <input
-            type="password"
-            id="admin-password"
-            placeholder="Digite a senha"
-          />
-          <button onclick="adminLogin()">Entrar</button>
+        <div class="admin-content" id="admin-panel">
+            <span class="close-admin" onclick="closeAdminModal()">×</span>
+            <h2>Painel Administrativo</h2>
+            <div class="admin-login" id="admin-login">
+                <input type="password" id="admin-password" placeholder="Digite a senha">
+                <button onclick="adminLogin()">Entrar</button>
+            </div>
+            <div class="admin-form" id="admin-form" style="display: none;">
+                <h3>Configurações da Pizzaria</h3>
+                <input type="text" id="pizzaria-name-input" placeholder="Nome da Pizzaria">
+                <input type="text" id="pizzaria-logo-input" placeholder="URL do Logo">
+                <button onclick="updatePizzaria()">Atualizar Pizzaria</button>
+
+                <h3>Telefone do WhatsApp para Pedidos</h3>
+                <input type="text" id="whatsapp-number-input" placeholder="Número do WhatsApp (ex: 5511999999999)">
+                <button onclick="updateWhatsappNumber()">Salvar Número do WhatsApp</button>
+                <p id="current-whatsapp">Número atual: <span id="whatsapp-display">Nenhum configurado</span></p>
+
+                <h3>Gerenciar Carrossel</h3>
+                <input type="text" id="carousel-image-input" placeholder="URL da Imagem do Carrossel">
+                <button onclick="addCarouselImage()">Adicionar Imagem</button>
+                <div id="carousel-images"></div>
+
+                <h3>Adicionar Categoria</h3>
+                <input type="text" id="category-name" placeholder="Nome da Categoria">
+                <button onclick="addCategory()">Adicionar Categoria</button>
+                <div id="admin-categories"></div>
+
+                <h3>Adicionar/Editar Pizza</h3>
+                <input type="text" id="pizza-name" placeholder="Nome da Pizza">
+                <input type="number" id="pizza-price" placeholder="Preço">
+                <input type="text" id="pizza-description" placeholder="Descrição">
+                <input type="text" id="pizza-image" placeholder="URL da Imagem">
+                <select id="pizza-category"></select>
+                <button onclick="addPizza()">Salvar Pizza</button>
+                <div id="admin-products"></div>
+            </div>
         </div>
-        <div class="admin-form" id="admin-form" style="display: none">
-          <h3>Configurações da Pizzaria</h3>
-          <input
-            type="text"
-            id="pizzaria-name-input"
-            placeholder="Nome da Pizzaria"
-          />
-          <input
-            type="text"
-            id="pizzaria-logo-input"
-            placeholder="URL do Logo"
-          />
-          <button onclick="updatePizzaria()">Atualizar Pizzaria</button>
-
-          <h3>Telefone do WhatsApp para Pedidos</h3>
-          <input
-            type="text"
-            id="whatsapp-number-input"
-            placeholder="Número do WhatsApp (ex: 5511999999999)"
-          />
-          <button onclick="updateWhatsappNumber()">
-            Salvar Número do WhatsApp
-          </button>
-          <p id="current-whatsapp">
-            Número atual: <span id="whatsapp-display">Nenhum configurado</span>
-          </p>
-
-          <h3>Gerenciar Carrossel</h3>
-          <input
-            type="text"
-            id="carousel-image-input"
-            placeholder="URL da Imagem do Carrossel"
-          />
-          <button onclick="addCarouselImage()">Adicionar Imagem</button>
-          <div id="carousel-images"></div>
-
-          <h3>Adicionar Categoria</h3>
-          <input
-            type="text"
-            id="category-name"
-            placeholder="Nome da Categoria"
-          />
-          <button onclick="addCategory()">Adicionar Categoria</button>
-          <div id="admin-categories"></div>
-
-          <h3>Adicionar/Editar Pizza</h3>
-          <input type="text" id="pizza-name" placeholder="Nome da Pizza" />
-          <input type="number" id="pizza-price" placeholder="Preço" />
-          <input type="text" id="pizza-description" placeholder="Descrição" />
-          <input type="text" id="pizza-image" placeholder="URL da Imagem" />
-          <select id="pizza-category"></select>
-          <button onclick="addPizza()">Salvar Pizza</button>
-          <div id="admin-products"></div>
-        </div>
-      </div>
     </div>
 
     <!-- Checkout Modal -->
     <div class="checkout-modal" id="checkout-modal">
-      <div class="checkout-content">
-        <span class="close-checkout" onclick="closeCheckoutModal()">×</span>
-        <h2>Finalizar Pedido</h2>
-        <form id="checkout-form">
-          <input
-            type="text"
-            id="customer-name"
-            placeholder="Seu Nome"
-            required
-          />
-          <input
-            type="text"
-            id="customer-phone"
-            placeholder="Seu Telefone (ex: 5511999999999)"
-            required
-          />
-          <input
-            type="text"
-            id="customer-address"
-            placeholder="Endereço de Entrega"
-            required
-          />
-          <select id="payment-method" required>
-            <option value="">Selecione a Forma de Pagamento</option>
-            <option value="Dinheiro">Dinheiro</option>
-            <option value="Cartão de Crédito">Cartão de Crédito</option>
-            <option value="Cartão de Débito">Cartão de Débito</option>
-            <option value="Pix">Pix</option>
-          </select>
-          <button type="submit">Enviar Pedido</button>
-        </form>
-      </div>
+        <div class="checkout-content">
+            <span class="close-checkout" onclick="closeCheckoutModal()">×</span>
+            <h2>Finalizar Pedido</h2>
+            <form id="checkout-form">
+                <input type="text" id="customer-name" placeholder="Seu Nome" required>
+                <input type="text" id="customer-phone" placeholder="Seu Telefone (ex: 5511999999999)" required>
+                <input type="text" id="customer-address" placeholder="Endereço de Entrega" required>
+                <select id="payment-method" required>
+                    <option value="">Selecione a Forma de Pagamento</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Cartão de Crédito">Cartão de Crédito</option>
+                    <option value="Cartão de Débito">Cartão de Débito</option>
+                    <option value="Pix">Pix</option>
+                </select>
+                <button type="submit">Enviar Pedido</button>
+            </form>
+        </div>
     </div>
 
     <script src="script.js"></script>
-  </body>
+</body>
 </html>
