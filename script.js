@@ -11,18 +11,29 @@ let carouselImages = JSON.parse(localStorage.getItem("carouselImages")) || [
     "https://images.unsplash.com/photo-1571066811602-716837d9f582?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
 ];
 
-// Garantir que pizzariaConfig tenha adminPassword padrão se não existir no localStorage
-let pizzariaConfig = JSON.parse(localStorage.getItem("pizzariaConfig")) || {
-    name: "Pizzaria Italiana",
-    logo: "https://images.unsplash.com/photo-1513104890138-7c749659a680?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&q=80",
-    whatsapp: "",
-    adminPassword: "admin123"
-};
-
-// Se adminPassword não estiver definido no config carregado, definir como "admin123"
-if (!pizzariaConfig.adminPassword) {
-    pizzariaConfig.adminPassword = "admin123";
-    saveToLocalStorage(); // Salva a correção no localStorage
+// Garantir que pizzariaConfig tenha valores padrão se não existir ou estiver corrompido
+let pizzariaConfig;
+try {
+    pizzariaConfig = JSON.parse(localStorage.getItem("pizzariaConfig")) || {
+        name: "Pizzaria Italiana",
+        logo: "https://via.placeholder.com/50",
+        whatsapp: "",
+        adminPassword: "admin123"
+    };
+    // Forçar a senha padrão se adminPassword estiver ausente ou inválido
+    if (!pizzariaConfig.adminPassword || typeof pizzariaConfig.adminPassword !== "string") {
+        pizzariaConfig.adminPassword = "admin123";
+        saveToLocalStorage();
+    }
+} catch (e) {
+    console.error("Erro ao carregar pizzariaConfig do localStorage:", e);
+    pizzariaConfig = {
+        name: "Pizzaria Italiana",
+        logo: "https://via.placeholder.com/50",
+        whatsapp: "",
+        adminPassword: "admin123"
+    };
+    saveToLocalStorage();
 }
 
 let selectedCategory = 'all';
@@ -34,11 +45,16 @@ let flavorCount = 2;
 let editingPizzaId = null;
 
 function saveToLocalStorage() {
-    localStorage.setItem("pizzas", JSON.stringify(pizzas));
-    localStorage.setItem("categories", JSON.stringify(categories));
-    localStorage.setItem("cart", JSON.stringify(cart));
-    localStorage.setItem("carouselImages", JSON.stringify(carouselImages));
-    localStorage.setItem("pizzariaConfig", JSON.stringify(pizzariaConfig));
+    try {
+        localStorage.setItem("pizzas", JSON.stringify(pizzas));
+        localStorage.setItem("categories", JSON.stringify(categories));
+        localStorage.setItem("cart", JSON.stringify(cart));
+        localStorage.setItem("carouselImages", JSON.stringify(carouselImages));
+        localStorage.setItem("pizzariaConfig", JSON.stringify(pizzariaConfig));
+        console.log("Dados salvos no localStorage:", { pizzariaConfig, pizzas, categories, cart, carouselImages });
+    } catch (e) {
+        console.error("Erro ao salvar no localStorage:", e);
+    }
 }
 
 function formatPrice(price) {
@@ -127,7 +143,6 @@ function updateAdminForm() {
         categorySelect.innerHTML += `<option value="${category}">${category}</option>`;
     });
     updateShareLinkDisplay();
-    // Limpa os campos de senha ao abrir o formulário
     document.getElementById("current-password").value = "";
     document.getElementById("new-password").value = "";
     document.getElementById("confirm-password").value = "";
@@ -198,6 +213,14 @@ function updatePizzaria() {
     alert("Configurações da pizzaria atualizadas com sucesso!");
 }
 
+function removeLogo() {
+    pizzariaConfig.logo = "https://via.placeholder.com/50"; // Define um logo padrão
+    updatePizzariaDisplay();
+    saveToLocalStorage();
+    document.getElementById("pizzaria-logo-input").value = pizzariaConfig.logo;
+    alert("Logo removido e restaurado para o padrão!");
+}
+
 function updatePizzariaDisplay() {
     document.getElementById("pizzaria-name").textContent = pizzariaConfig.name;
     document.getElementById("pizzaria-logo").src = pizzariaConfig.logo;
@@ -216,7 +239,7 @@ function updateWhatsappNumber() {
         return;
     }
 
-    pizzariaConfig.whatsapp = whatsapp;
+    pizzariaConfig.whatsapp = whatsapp; // Salva exatamente o número digitado
     saveToLocalStorage();
     updateWhatsappDisplay();
     alert("Número do WhatsApp atualizado com sucesso!");
