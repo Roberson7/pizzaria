@@ -1,111 +1,178 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizzaria Italiana</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
-</head>
-<body>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pizzaria Sabor da Itália</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora&family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <header>
-        <div class="logo-container">
-            <img src="https://via.placeholder.com/50" alt="Logo da Pizzaria" id="pizzaria-logo">
-            <h1 id="pizzaria-name">Pizzaria Italiana</h1>
+      <div class="header-left">
+        <img
+          id="pizzaria-logo"
+          src="https://via.placeholder.com/60"
+          alt="Logo"
+        />
+        <div class="header-title">
+          <span id="pizzaria-name">
+            <span>Sabor</span> <span>da Itália</span>
+            <span class="flag-icon"></span>
+          </span>
+          <span id="pizzaria-address"
+            >Rua Icarai, 310 - Vila do Conde - Barueri</span
+          >
         </div>
-        <nav class="navbar">
-            <span class="hamburger" onclick="toggleMenu()">☰</span>
-            <ul id="nav-list"></ul>
-        </nav>
-        <div>
-            <span class="cart-icon" onclick="toggleCart()">🛒 (<span id="cart-count">0</span>)</span>
-            <span class="admin-icon" onclick="openAdminModal()">🔧</span>
+      </div>
+      <div class="header-right">
+        <div class="header-buttons">
+          <button class="cart-btn" onclick="toggleCart()">
+            🛒 <span id="cart-count">0</span>
+          </button>
+          <button class="admin-btn" onclick="openAdminModal()">👤</button>
         </div>
+        <div class="navbar">
+          <button class="menu-btn" onclick="toggleMenu()">☰</button>
+          <ul id="nav-list" class="nav-list"></ul>
+        </div>
+        <div id="mobile-header-info" class="mobile-only">
+          <span id="mobile-address"
+            >Rua Icarai, 310 - Vila do Conde - Barueri</span
+          >
+        </div>
+      </div>
     </header>
 
-    <div class="container">
-        <div class="carousel">
-            <div class="carousel-container" id="carousel-container"></div>
-            <button class="carousel-btn prev" onclick="prevSlide()">❮</button>
-            <button class="carousel-btn next" onclick="nextSlide()">❯</button>
+    <main>
+      <div class="carousel">
+        <div id="carousel-container"></div>
+      </div>
+      <section id="products"></section>
+    </main>
+
+    <button class="floating-btn" onclick="openCustomPizzaModal()">🍕</button>
+
+    <footer>
+      <p>© 2025 Pizzaria Sabor da Itália</p>
+    </footer>
+
+    <div id="cart-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="toggleCart()">×</span>
+        <h2>Carrinho</h2>
+        <div id="cart-items"></div>
+        <p id="cart-total">Total: R$ 0,00</p>
+        <button id="checkout-btn" onclick="openCheckoutModal()">
+          Finalizar Pedido
+        </button>
+      </div>
+    </div>
+
+    <div id="admin-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeAdminModal()">×</span>
+        <div id="admin-login">
+          <h2>Login Admin</h2>
+          <input type="password" id="admin-password" placeholder="Senha" />
+          <button onclick="adminLogin()">Entrar</button>
+          <button class="forgot-password" onclick="showResetPassword()">
+            Esqueceu a senha?
+          </button>
+          <button class="close-btn" onclick="closeAdminModal()">Fechar</button>
         </div>
-
-        <button class="custom-pizza-btn" id="fixed-custom-pizza-btn" onclick="openCustomPizzaModal()">Monte sua Pizza</button>
-        <div class="products-grid" id="products"></div>
-    </div>
-
-    <!-- Modal do Carrinho -->
-    <div class="cart-modal" id="cart-modal">
-        <div class="cart-content">
-            <span class="close-cart" onclick="toggleCart()">×</span>
-            <h2>Carrinho</h2>
-            <div id="cart-items"></div>
-            <p id="cart-total">Total: R$ 0,00</p>
-            <button class="checkout-btn" onclick="openCheckoutModal()">Finalizar Pedido</button>
+        <div id="admin-reset" style="display: none">
+          <h2>Redefinir Senha</h2>
+          <input type="text" id="reset-keyword" placeholder="Palavra-chave" />
+          <input type="password" id="new-password" placeholder="Nova Senha" />
+          <button onclick="resetPassword()">Redefinir</button>
+          <button class="forgot-password" onclick="showAdminLogin()">
+            Voltar ao Login
+          </button>
+          <button class="close-btn" onclick="closeAdminModal()">Fechar</button>
         </div>
+        <div id="admin-form" style="display: none"></div>
+      </div>
     </div>
 
-    <!-- Modal Monte sua Pizza -->
-    <div class="custom-pizza-modal" id="custom-pizza-modal">
-        <div class="custom-pizza-content">
-            <span class="close-custom" onclick="closeCustomPizzaModal()">×</span>
-            <h2>Monte sua Pizza</h2>
-            <div class="instructions">
-                <p>Escolha quantos sabores você quer (2, 3, 4 ou 8).</p>
-                <p>Clique em uma fatia da pizza para selecioná-la.</p>
-                <p>Escolha um sabor no menu abaixo para preencher a fatia.</p>
-                <p>O preço será o do sabor mais caro escolhido.</p>
-            </div>
-            <select id="flavor-count">
-                <option value="2">2 Sabores</option>
-                <option value="3">3 Sabores</option>
-                <option value="4">4 Sabores</option>
-                <option value="8">8 Fatias (Sabores Individuais)</option>
-            </select>
-            <svg id="pizza-svg"></svg>
-            <select id="flavor-select"></select>
-            <img id="selected-flavor-image" style="display: none; max-width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-top: 10px;" alt="Sabor Selecionado">
-            <button onclick="addCustomPizzaToCart()">Adicionar ao Carrinho</button>
-        </div>
+    <div id="checkout-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeCheckoutModal()">×</span>
+        <h2>Finalizar Pedido</h2>
+        <form id="checkout-form">
+          <input type="text" id="customer-name" placeholder="Nome" required />
+          <input
+            type="text"
+            id="customer-phone"
+            placeholder="Telefone"
+            required
+          />
+          <input
+            type="text"
+            id="customer-address"
+            placeholder="Endereço"
+            required
+          />
+          <select id="payment-method" required>
+            <option value="">Método de Pagamento</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Cartão">Cartão</option>
+            <option value="PIX">PIX</option>
+          </select>
+          <button type="submit">Enviar Pedido</button>
+        </form>
+      </div>
     </div>
 
-    <!-- Modal de Descrição -->
-    <div class="description-modal" id="description-modal">
-        <div class="description-content" id="description-content"></div>
+    <div id="custom-pizza-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeCustomPizzaModal()">×</span>
+        <h2>Monte sua Pizza</h2>
+        <select id="flavor-count" onchange="updateFlavorSelectors()">
+          <option value="2">2 Sabores</option>
+          <option value="3">3 Sabores</option>
+          <option value="4">4 Sabores</option>
+          <option value="8">8 Sabores</option>
+        </select>
+        <div id="flavor-selectors"></div>
+        <svg
+          id="pizza-svg"
+          width="200"
+          height="200"
+          viewBox="0 0 200 200"
+        ></svg>
+        <button onclick="addCustomPizzaToCart()">Adicionar ao Carrinho</button>
+      </div>
     </div>
 
-    <!-- Modal de Administração -->
-    <div class="admin-modal" id="admin-modal">
-        <div class="admin-content">
-            <span class="close-admin" onclick="closeAdminModal()">×</span>
-            <div class="admin-login" id="admin-login">
-                <h2>Login Administrativo</h2>
-                <input type="password" id="admin-password" placeholder="Senha">
-                <button onclick="adminLogin()">Entrar</button>
-            </div>
-            <div class="admin-form" id="admin-form" style="display: none;"></div>
-        </div>
+    <div id="product-detail-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeProductDetailModal()">×</span>
+        <h2 id="product-detail-name"></h2>
+        <img
+          id="product-detail-image"
+          src=""
+          alt=""
+          style="width: 100%; height: 200px; object-fit: cover"
+        />
+        <p id="product-detail-description"></p>
+        <p id="product-detail-price"></p>
+        <button onclick="addToCartFromDetail()">Adicionar ao Carrinho</button>
+      </div>
     </div>
 
-    <!-- Modal de Checkout -->
-    <div class="checkout-modal" id="checkout-modal">
-        <div class="checkout-content">
-            <span class="close-checkout" onclick="closeCheckoutModal()">×</span>
-            <h2>Finalizar Pedido</h2>
-            <form id="checkout-form">
-                <input type="text" id="customer-name" placeholder="Seu Nome" required>
-                <input type="text" id="customer-phone" placeholder="Telefone" required>
-                <input type="text" id="customer-address" placeholder="Endereço de Entrega" required>
-                <select id="payment-method" required>
-                    <option value="">Selecione a Forma de Pagamento</option>
-                    <option value="Dinheiro">Dinheiro</option>
-                    <option value="Cartão de Crédito">Cartão de Crédito</option>
-                    <option value="Cartão de Débito">Cartão de Débito</option>
-                    <option value="PIX">PIX</option>
-                </select>
-                <button type="submit">Enviar Pedido pelo WhatsApp</button>
-            </form>
-        </div>
+    <div id="alert-modal" class="modal">
+      <div class="modal-content" id="alert-modal-content">
+        <span class="close" onclick="closeAlertModal()">×</span>
+        <h2 id="alert-title">Aviso</h2>
+        <div id="alert-message" class="alert-message"></div>
+        <button id="alert-ok-btn" onclick="closeAlertModal()">OK</button>
+      </div>
     </div>
-</body>
+
+    <script src="script.js" defer></script>
+  </body>
 </html>
