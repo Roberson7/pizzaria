@@ -53,6 +53,7 @@ let carouselImages =
 let pizzariaConfig =
   JSON.parse(localStorage.getItem("pizzariaConfig")) ||
   initialData.pizzariaConfig;
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
 let selectedCategory = "all";
 let currentSlide = 0;
 let selectedPizzaId = null;
@@ -99,10 +100,10 @@ const saveToLocalStorage = () => {
   localStorage.setItem("cart", JSON.stringify(cart));
   localStorage.setItem("carouselImages", JSON.stringify(carouselImages));
   localStorage.setItem("pizzariaConfig", JSON.stringify(pizzariaConfig));
+  localStorage.setItem("orders", JSON.stringify(orders));
 };
 
 const loadInitialData = () => {
-  console.log("loadInitialData chamado");
   if (!pizzariaConfig.adminPassword) {
     pizzariaConfig.adminPassword = "Gcipione";
     saveToLocalStorage();
@@ -152,7 +153,6 @@ const toggleMenu = () => {
 };
 
 const updatePizzariaDisplay = () => {
-  console.log("updatePizzariaDisplay chamado");
   document.getElementById(
     "pizzaria-name"
   ).innerHTML = `<span>Sabor</span> <span>da Itália</span> <span class="flag-icon"></span>`;
@@ -160,27 +160,22 @@ const updatePizzariaDisplay = () => {
     pizzariaConfig.address;
   const mobileAddressElement = document.getElementById("mobile-address");
   if (mobileAddressElement) {
-    console.log("Atualizando endereço no celular:", pizzariaConfig.address);
     mobileAddressElement.textContent = pizzariaConfig.address;
-  } else {
-    console.error("Elemento #mobile-address não encontrado!");
   }
   const logoElement = document.getElementById("pizzaria-logo");
   if (logoElement && pizzariaConfig.logo) {
-    console.log("Atualizando logotipo com URL:", pizzariaConfig.logo);
     logoElement.src = pizzariaConfig.logo;
   }
 };
 
 const renderPizzas = () => {
-  console.log("renderPizzas chamado");
   const productsGrid = document.getElementById("products");
   let filteredPizzas =
     selectedCategory === "all"
       ? pizzas
       : pizzas.filter((p) => p.category === selectedCategory);
-  
-  const searchQuery = document.getElementById("search-bar")?.value.toLowerCase() || "";
+
+  const searchQuery = document.getElementById("search-bar").value.toLowerCase();
   if (searchQuery) {
     filteredPizzas = filteredPizzas.filter((pizza) =>
       pizza.name.toLowerCase().includes(searchQuery)
@@ -236,7 +231,6 @@ const renderCart = () => {
             }`;
           })
           .join("<br>");
-        // Calcula o preço com base no sabor mais caro
         const maxPrice = Math.max(
           ...item.flavors.map((flavorId) => {
             const pizza = pizzas.find((p) => p.id === flavorId);
@@ -348,6 +342,7 @@ const setupCheckoutForm = () => {
       showAlertModal("Por favor, preencha todos os campos!", "Erro");
       return;
     }
+
     let orderMessage = `📋 *Novo Pedido - ${pizzariaConfig.name}* 📋\n\n`;
     orderMessage += `*Cliente:* ${name}\n`;
     orderMessage += `*Telefone:* ${formatPhoneNumber(phone)}\n`;
@@ -355,7 +350,7 @@ const setupCheckoutForm = () => {
     orderMessage += `*Pagamento:* ${payment}\n\n`;
     orderMessage += `*Itens do Pedido:*\n`;
     let total = 0;
-    cart.forEach((item) => {
+    const orderItems = cart.map((item) => {
       if (item.isCustom) {
         const flavorNames = item.flavors
           .map((flavorId, index) => {
@@ -366,7 +361,6 @@ const setupCheckoutForm = () => {
             }`;
           })
           .join("\n  ");
-        // Calcula o preço com base no sabor mais caro
         const maxPrice = Math.max(
           ...item.flavors.map((flavorId) => {
             const pizza = pizzas.find((p) => p.id === flavorId);
@@ -375,30 +369,54 @@ const setupCheckoutForm = () => {
         );
         const itemTotal = maxPrice * item.quantity;
         total += itemTotal;
-        orderMessage += `*- Pizza Personalizada*\n  ${flavorNames}\n  Quantidade: ${
-          item.quantity
-        }x\n  Valor: ${formatPrice(itemTotal)}\n`;
+        return {
+          name: "Pizza Personalizada",
+          flavors: flavorNames,
+          quantity: item.quantity,
+          total: itemTotal,
+        };
       } else {
         const pizza = pizzas.find((p) => p.id === item.pizzaId);
         const itemTotal = pizza.price * item.quantity;
         total += itemTotal;
-        orderMessage += `- ${pizza.name}\n  Quantidade: ${
-          item.quantity
-        }x\n  Valor: ${formatPrice(itemTotal)}\n`;
+        return {
+          name: pizza.name,
+          quantity: item.quantity,
+          total: itemTotal,
+        };
       }
     });
+    orderMessage += orderItems
+      .map(
+        (item) =>
+          `- ${item.name}\n  Quantidade: ${item.quantity}x\n  Valor: ${formatPrice(
+            item.total
+          )}\n${item.flavors || ""}`
+      )
+      .join("");
     orderMessage += `\n*Total:* ${formatPrice(total)}`;
+
+    const newOrder = {
+      id: Date.now().toString(),
+      customer: { name, phone, address, payment },
+      items: orderItems,
+      total,
+      date: new Date().toLocaleString(),
+      status: "Pendente",
+    };
+    orders.push(newOrder);
+    saveToLocalStorage();
+
     const confirmationMessage = `
-          <p class="alert-message">Seu pedido foi enviado com sucesso!</p>
-          <div class="order-details">
-              <p><span>Nome:</span> ${name}</p>
-              <p><span>Telefone:</span> ${formatPhoneNumber(phone)}</p>
-              <p><span>Endereço:</span> ${address}</p>
-              <p><span>Pagamento:</span> ${payment}</p>
-          </div>
-          <p class="thank-you">Você será redirecionado automaticamente para o WhatsApp...</p>
-          <p class="thank-you">Grazie mille! Em breve, sua pizza estará a caminho!</p>
-      `;
+      <p class="alert-message">Seu pedido foi enviado com sucesso!</p>
+      <div class="order-details">
+        <p><span>Nome:</span> ${name}</p>
+        <p><span>Telefone:</span> ${formatPhoneNumber(phone)}</p>
+        <p><span>Endereço:</span> ${address}</p>
+        <p><span>Pagamento:</span> ${payment}</p>
+      </div>
+      <p class="thank-you">Grazie mille! Em breve, sua pizza estará a caminho!</p>
+    `;
     if (pizzariaConfig.whatsapp) {
       const whatsappNumber = pizzariaConfig.whatsapp.replace(/\D/g, "");
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
@@ -410,12 +428,9 @@ const setupCheckoutForm = () => {
         closeAlertModal();
       }, 2000);
     } else {
-      showAlertModal(
-        "Número de WhatsApp não configurado pelo administrador!",
-        "Erro"
-      );
-      return;
+      showAlertModal(confirmationMessage, "Sucesso", true);
     }
+
     cart = [];
     saveToLocalStorage();
     updateCartCount();
@@ -480,83 +495,91 @@ const resetPassword = () => {
 const updateAdminForm = () => {
   const adminForm = document.getElementById("admin-form");
   adminForm.innerHTML = `
-      <h2>Painel de Administração</h2>
-      <h3>Configurações da Pizzaria</h3>
-      <input type="text" id="pizzaria-name-input" value="${
-        pizzariaConfig.name
-      }" placeholder="Nome da Pizzaria">
-      <input type="text" id="pizzaria-logo-input" value="${
-        pizzariaConfig.logo
-      }" placeholder="URL do Logo">
-      <input type="text" id="pizzaria-address-input" value="${
-        pizzariaConfig.address
-      }" placeholder="Endereço da Pizzaria">
-      <input type="text" id="pizzaria-whatsapp-input" value="${
-        pizzariaConfig.whatsapp || ""
-      }" placeholder="Número do WhatsApp (ex: 5511999999999)">
-      <button onclick="updatePizzaria()">Atualizar Configurações</button>
-      <h3>${
-        editingPizzaIndex !== null ? "Editar Pizza" : "Adicionar Nova Pizza"
-      }</h3>
-      <input type="text" id="pizza-name" placeholder="Nome da Pizza" value="${
-        editingPizzaIndex !== null ? pizzas[editingPizzaIndex].name : ""
-      }">
-      <input type="number" id="pizza-price" placeholder="Preço" step="0.01" value="${
-        editingPizzaIndex !== null ? pizzas[editingPizzaIndex].price : ""
-      }">
-      <input type="text" id="pizza-description" placeholder="Descrição" value="${
-        editingPizzaIndex !== null ? pizzas[editingPizzaIndex].description : ""
-      }">
-      <input type="text" id="pizza-image" placeholder="URL da Imagem" value="${
-        editingPizzaIndex !== null ? pizzas[editingPizzaIndex].image : ""
-      }">
-      <select id="pizza-category">
-          <option value="">Selecionar a Categoria</option>
-          ${categories
-            .map(
-              (cat) =>
-                `<option value="${cat}" ${
-                  editingPizzaIndex !== null &&
-                  pizzas[editingPizzaIndex].category === cat
-                    ? "selected"
-                    : ""
-                }>${cat}</option>`
-            )
-            .join("")}
-      </select>
-      <button onclick="${
-        editingPizzaIndex !== null ? "updatePizza()" : "addPizza()"
-      }">${
-    editingPizzaIndex !== null ? "Salvar Alterações" : "Adicionar Pizza"
-  }</button>
-      ${
-        editingPizzaIndex !== null
-          ? '<button onclick="cancelEdit()">Cancelar Edição</button>'
-          : ""
-      }
-      <h3>Gerenciar Pizzas</h3>
-      <div id="pizza-list">
-          ${pizzas
-            .map(
-              (pizza, index) =>
-                `<p>${pizza.name} - ${formatPrice(pizza.price)} 
-                      <button onclick="editPizza(${index})">Editar</button>
-                      <button onclick="deletePizza(${index})">Excluir</button></p>`
-            )
-            .join("")}
-      </div>
-      <h3>Imagens do Carrossel</h3>
-      <input type="text" id="carousel-image-input" placeholder="URL da Imagem">
-      <button onclick="addCarouselImage()">Adicionar Imagem</button>
-      <div id="carousel-images">
-          ${carouselImages
-            .map(
-              (img, i) =>
-                `<p>${img} <button onclick="deleteCarouselImage(${i})">Excluir</button></p>`
-            )
-            .join("")}
-      </div>
-      <button class="close-btn" onclick="closeAdminModal()">Fechar</button>
+    <h2>Painel de Administração</h2>
+    <h3>Configurações da Pizzaria</h3>
+    <input type="text" id="pizzaria-name-input" value="${pizzariaConfig.name}" placeholder="Nome da Pizzaria">
+    <input type="text" id="pizzaria-logo-input" value="${pizzariaConfig.logo}" placeholder="URL do Logo">
+    <input type="text" id="pizzaria-address-input" value="${pizzariaConfig.address}" placeholder="Endereço da Pizzaria">
+    <input type="text" id="pizzaria-whatsapp-input" value="${pizzariaConfig.whatsapp || ""}" placeholder="Número do WhatsApp (ex: 5511999999999)">
+    <button onclick="updatePizzaria()">Atualizar Configurações</button>
+
+    <h3>Pedidos dos Clientes</h3>
+    <div id="order-list">
+      ${orders
+        .map(
+          (order, index) => `
+            <p>
+              <strong>Pedido #${order.id}</strong> - ${order.customer.name} - ${order.date} - ${formatPrice(order.total)} - Status: ${order.status}
+              <button onclick="showOrderDetails(${index})">Ver Detalhes</button>
+              <button onclick="updateOrderStatus(${index}, 'Entregue')">Marcar como Entregue</button>
+            </p>
+          `
+        )
+        .join("")}
+    </div>
+
+    <h3>${editingPizzaIndex !== null ? "Editar Pizza" : "Adicionar Nova Pizza"}</h3>
+    <input type="text" id="pizza-name" value="${
+      editingPizzaIndex !== null ? pizzas[editingPizzaIndex].name : ""
+    }" placeholder="Nome da Pizza">
+    <input type="number" id="pizza-price" value="${
+      editingPizzaIndex !== null ? pizzas[editingPizzaIndex].price : ""
+    }" placeholder="Preço" step="0.01">
+    <input type="text" id="pizza-description" value="${
+      editingPizzaIndex !== null ? pizzas[editingPizzaIndex].description : ""
+    }" placeholder="Descrição">
+    <input type="text" id="pizza-image" value="${
+      editingPizzaIndex !== null ? pizzas[editingPizzaIndex].image : ""
+    }" placeholder="URL da Imagem">
+    <select id="pizza-category">
+      <option value="" disabled ${
+        editingPizzaIndex === null ? "selected" : ""
+      }>Selecione uma categoria</option>
+      ${categories
+        .map(
+          (cat) =>
+            `<option value="${cat}" ${
+              editingPizzaIndex !== null &&
+              pizzas[editingPizzaIndex].category === cat
+                ? "selected"
+                : ""
+            }>${cat}</option>`
+        )
+        .join("")}
+    </select>
+    <button onclick="addOrUpdatePizza()">${
+      editingPizzaIndex !== null ? "Atualizar Pizza" : "Adicionar Pizza"
+    }</button>
+
+    <h3>Pizzas Cadastradas</h3>
+    <div id="pizza-list">
+      ${pizzas
+        .map(
+          (pizza, index) => `
+            <p>${pizza.name} - ${formatPrice(pizza.price)}
+              <button onclick="editPizza(${index})">Editar</button>
+              <button onclick="deletePizza(${index})">Excluir</button>
+            </p>
+          `
+        )
+        .join("")}
+    </div>
+
+    <h3>Imagens do Carrossel</h3>
+    <input type="text" id="carousel-image-input" placeholder="URL da Imagem">
+    <button onclick="addCarouselImage()">Adicionar Imagem</button>
+    <div id="carousel-images">
+      ${carouselImages
+        .map(
+          (img, index) => `
+            <p>${img}
+              <button onclick="deleteCarouselImage(${index})">Excluir</button>
+            </p>
+          `
+        )
+        .join("")}
+    </div>
+    <button class="close-btn" onclick="closeAdminModal()">Fechar</button>
   `;
 };
 
@@ -571,34 +594,47 @@ const updatePizzaria = () => {
   ).value;
   saveToLocalStorage();
   updatePizzariaDisplay();
-  showAlertModal("Configurações atualizadas!", "Sucesso");
+  showAlertModal("Configurações atualizadas com sucesso!", "Sucesso");
 };
 
-const addPizza = () => {
+const addOrUpdatePizza = () => {
   const name = document.getElementById("pizza-name").value;
   const price = parseFloat(document.getElementById("pizza-price").value);
   const description = document.getElementById("pizza-description").value;
-  const image =
-    document.getElementById("pizza-image").value ||
-    "https://via.placeholder.com/300";
+  const image = document.getElementById("pizza-image").value;
   const category = document.getElementById("pizza-category").value;
-  if (!name || !price || !category) {
-    showAlertModal("Por favor, preencha nome, preço e categoria!", "Erro");
+
+  if (!name || !price || !description || !image || !category) {
+    showAlertModal("Por favor, preencha todos os campos!", "Erro");
     return;
   }
-  const pizza = {
-    id: Date.now().toString(),
-    name,
-    price,
-    description,
-    image,
-    category,
-  };
-  pizzas.push(pizza);
+
+  if (editingPizzaIndex !== null) {
+    pizzas[editingPizzaIndex] = {
+      ...pizzas[editingPizzaIndex],
+      name,
+      price,
+      description,
+      image,
+      category,
+    };
+    editingPizzaIndex = null;
+    showAlertModal("Pizza atualizada com sucesso!", "Sucesso");
+  } else {
+    const newPizza = {
+      id: Date.now().toString(),
+      name,
+      price,
+      description,
+      image,
+      category,
+    };
+    pizzas.push(newPizza);
+    showAlertModal("Pizza adicionada com sucesso!", "Sucesso");
+  }
   saveToLocalStorage();
   renderPizzas();
   updateAdminForm();
-  showAlertModal("Pizza adicionada com sucesso!", "Sucesso");
 };
 
 const editPizza = (index) => {
@@ -606,44 +642,93 @@ const editPizza = (index) => {
   updateAdminForm();
 };
 
-const updatePizza = () => {
-  const name = document.getElementById("pizza-name").value;
-  const price = parseFloat(document.getElementById("pizza-price").value);
-  const description = document.getElementById("pizza-description").value;
-  const image =
-    document.getElementById("pizza-image").value ||
-    "https://via.placeholder.com/300";
-  const category = document.getElementById("pizza-category").value;
-  if (!name || !price || !category) {
-    showAlertModal("Por favor, preencha nome, preço e categoria!", "Erro");
-    return;
-  }
-  pizzas[editingPizzaIndex] = {
-    ...pizzas[editingPizzaIndex],
-    name,
-    price,
-    description,
-    image,
-    category,
-  };
+const deletePizza = (index) => {
+  pizzas.splice(index, 1);
   saveToLocalStorage();
   renderPizzas();
-  editingPizzaIndex = null;
   updateAdminForm();
-  showAlertModal("Pizza atualizada com sucesso!", "Sucesso");
+  showAlertModal("Pizza excluída com sucesso!", "Sucesso");
 };
 
-const cancelEdit = () => {
-  editingPizzaIndex = null;
-  updateAdminForm();
-};
-
-const deletePizza = (index) => {
-  if (confirm("Tem certeza que deseja excluir esta pizza?")) {
-    pizzas.splice(index, 1);
+const addCarouselImage = () => {
+  const imageUrl = document.getElementById("carousel-image-input").value;
+  if (imageUrl) {
+    carouselImages.push(imageUrl);
     saveToLocalStorage();
-    renderPizzas();
+    renderCarousel();
     updateAdminForm();
+    document.getElementById("carousel-image-input").value = "";
+    showAlertModal("Imagem adicionada ao carrossel!", "Sucesso");
+  } else {
+    showAlertModal("Por favor, insira uma URL válida!", "Erro");
+  }
+};
+
+const deleteCarouselImage = (index) => {
+  carouselImages.splice(index, 1);
+  saveToLocalStorage();
+  renderCarousel();
+  updateAdminForm();
+  showAlertModal("Imagem excluída do carrossel!", "Sucesso");
+};
+
+const showOrderDetails = (index) => {
+  const order = orders[index];
+  const details = `
+    <p><strong>Cliente:</strong> ${order.customer.name}</p>
+    <p><strong>Telefone:</strong> ${formatPhoneNumber(order.customer.phone)}</p>
+    <p><strong>Endereço:</strong> ${order.customer.address}</p>
+    <p><strong>Pagamento:</strong> ${order.customer.payment}</p>
+    <p><strong>Itens:</strong></p>
+    ${order.items
+      .map(
+        (item) =>
+          `<p>- ${item.name} (${item.quantity}x) - ${formatPrice(item.total)}${
+            item.flavors ? "<br>" + item.flavors : ""
+          }</p>`
+      )
+      .join("")}
+    <p><strong>Total:</strong> ${formatPrice(order.total)}</p>
+    <p><strong>Data:</strong> ${order.date}</p>
+    <p><strong>Status:</strong> ${order.status}</p>
+  `;
+  showAlertModal(details, `Detalhes do Pedido #${order.id}`);
+};
+
+const updateOrderStatus = (index, status) => {
+  orders[index].status = status;
+  saveToLocalStorage();
+  updateAdminForm();
+  showAlertModal(
+    `Status do pedido #${orders[index].id} atualizado para "${status}"!`,
+    "Sucesso"
+  );
+};
+
+const renderCarousel = () => {
+  const container = document.getElementById("carousel-container");
+  container.innerHTML = carouselImages
+    .map(
+      (img) =>
+        `<img src="${img}" class="carousel-slide" alt="Carrossel" onerror="this.src='https://via.placeholder.com/600'">`
+    )
+    .join("");
+  updateCarousel();
+};
+
+const updateCarousel = () => {
+  const container = document.getElementById("carousel-container");
+  const slideWidth = container.offsetWidth;
+  container.style.transform = `translateX(${-currentSlide * slideWidth}px)`;
+};
+
+const startCarousel = () => {
+  clearInterval(slideInterval);
+  if (carouselImages.length > 1) {
+    slideInterval = setInterval(() => {
+      currentSlide = (currentSlide + 1) % carouselImages.length;
+      updateCarousel();
+    }, 5000);
   }
 };
 
@@ -658,270 +743,103 @@ const closeCustomPizzaModal = () => {
   const modal = document.getElementById("custom-pizza-modal");
   modal.classList.remove("show");
   setTimeout(() => (modal.style.display = "none"), 300);
+  document.getElementById("flavor-count").selectedIndex = 0;
+  document.getElementById("flavor-selectors").innerHTML = "";
+  renderPizzaSVG(0);
 };
 
 const updateFlavorSelectors = () => {
-  const flavorCount = parseInt(document.getElementById("flavor-count").value);
-  const flavorSelectorsDiv = document.getElementById("flavor-selectors");
-  flavorSelectorsDiv.innerHTML = "";
-  if (!flavorCount) return; // Evita renderizar seletores se nenhuma quantidade for escolhida
+  const flavorCount = parseInt(
+    document.getElementById("flavor-count").value || "0"
+  );
+  const selectorsDiv = document.getElementById("flavor-selectors");
+  selectorsDiv.innerHTML = "";
   for (let i = 0; i < flavorCount; i++) {
+    const ordinal = ["Primeiro", "Segundo", "Terceiro", "Quarto"][i];
     const select = document.createElement("select");
-    select.id = `flavor-select-${i}`;
     select.innerHTML =
-      `<option value="">Selecione o ${i + 1}º sabor</option>` +
+      `<option value="" disabled selected>${ordinal} Sabor</option>` +
       pizzas
         .map((pizza) => `<option value="${pizza.id}">${pizza.name}</option>`)
         .join("");
-    select.onchange = () => {
-      updateFlavorOptions();
-      updatePizzaPreview();
-    };
-    flavorSelectorsDiv.appendChild(select);
+    selectorsDiv.appendChild(select);
   }
-  updateFlavorOptions();
-  updatePizzaPreview();
+  renderPizzaSVG(flavorCount);
 };
 
-const updateFlavorOptions = () => {
-  const flavorCount = parseInt(document.getElementById("flavor-count").value);
-  if (!flavorCount) return; // Evita executar se nenhuma quantidade for escolhida
-  const selectedFlavors = [];
-
-  // Coleta os sabores já selecionados
-  for (let i = 0; i < flavorCount; i++) {
-    const select = document.getElementById(`flavor-select-${i}`);
-    if (select && select.value) {
-      selectedFlavors.push(select.value);
-    }
-  }
-
-  // Atualiza as opções de cada seletor, desabilitando os sabores já escolhidos
-  for (let i = 0; i < flavorCount; i++) {
-    const select = document.getElementById(`flavor-select-${i}`);
-    const currentValue = select.value;
-    select.innerHTML =
-      `<option value="">Selecione o ${i + 1}º sabor</option>` +
-      pizzas
-        .map((pizza) => {
-          const isDisabled =
-            selectedFlavors.includes(pizza.id) && pizza.id !== currentValue;
-          return `<option value="${pizza.id}" ${isDisabled ? "disabled" : ""}>${
-            pizza.name
-          }</option>`;
-        })
-        .join("");
-    select.value = currentValue;
-  }
-};
-
-const updatePizzaPreview = () => {
-  const flavorCount = parseInt(document.getElementById("flavor-count").value);
+const renderPizzaSVG = (flavorCount) => {
   const svg = document.getElementById("pizza-svg");
   svg.innerHTML = "";
-  if (!flavorCount) return; // Evita renderizar o SVG se nenhuma quantidade for escolhida
-
-  const radius = 90;
+  const radius = 80;
   const centerX = 100;
   const centerY = 100;
-  const angleStep = 360 / flavorCount; // Divide a pizza em 2, 3 ou 4 fatias
 
-  // Desenha a base da pizza
-  svg.innerHTML += `<circle cx="${centerX}" cy="${centerY}" r="${
-    radius + 10
-  }" fill="#e6c84f" />`; // Borda
-  svg.innerHTML += `<circle cx="${centerX}" cy="${centerY}" r="${radius}" fill="#fff8e1" />`; // Base
+  const circle = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "circle"
+  );
+  circle.setAttribute("cx", centerX);
+  circle.setAttribute("cy", centerY);
+  circle.setAttribute("r", radius);
+  circle.setAttribute("fill", "#f9e8b7");
+  svg.appendChild(circle);
 
-  // Desenha cada fatia com o sabor correspondente
-  for (let i = 0; i < flavorCount; i++) {
-    const startAngle = i * angleStep;
-    const endAngle = (i + 1) * angleStep;
-    const startRad = (startAngle * Math.PI) / 180;
-    const endRad = (endAngle * Math.PI) / 180;
-    const x1 = centerX + radius * Math.cos(startRad);
-    const y1 = centerY + radius * Math.sin(startRad);
-    const x2 = centerX + radius * Math.cos(endRad);
-    const y2 = centerY + radius * Math.sin(endRad);
-    const largeArcFlag = endAngle - startAngle <= 180 ? 0 : 1;
-    const pathD = `M${centerX},${centerY} L${x1},${y1} A${radius},${radius} 0 ${largeArcFlag},1 ${x2},${y2} Z`;
+  if (flavorCount > 1) {
+    const angleStep = (2 * Math.PI) / flavorCount;
+    for (let i = 0; i < flavorCount; i++) {
+      const startAngle = i * angleStep - Math.PI / 2;
+      const endAngle = (i + 1) * angleStep - Math.PI / 2;
+      const x1 = centerX + radius * Math.cos(startAngle);
+      const y1 = centerY + radius * Math.sin(startAngle);
+      const x2 = centerX + radius * Math.cos(endAngle);
+      const y2 = centerY + radius * Math.sin(endAngle);
 
-    // Adiciona a fatia com uma cor padrão (caso o sabor não esteja selecionado)
-    svg.innerHTML += `<path d="${pathD}" fill="#ccc" stroke="#8a1c1c" stroke-width="2" />`;
-
-    // Verifica se um sabor foi selecionado para esta fatia
-    const flavorSelect = document.getElementById(`flavor-select-${i}`);
-    if (flavorSelect && flavorSelect.value) {
-      const selectedPizza = pizzas.find((p) => p.id === flavorSelect.value);
-      if (selectedPizza) {
-        // Adiciona a imagem do sabor na fatia usando clip-path
-        svg.innerHTML += `<defs><clipPath id="clip-${i}"><path d="${pathD}" /></clipPath></defs>`;
-        const imgSize = radius * 2;
-        const offsetX = centerX - radius;
-        const offsetY = centerY - radius;
-        svg.innerHTML += `<image href="${selectedPizza.image}" x="${offsetX}" y="${offsetY}" width="${imgSize}" height="${imgSize}" clip-path="url(#clip-${i})" preserveAspectRatio="xMidYMid slice" />`;
-      }
+      const path = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "path"
+      );
+      const d = `M ${centerX},${centerY} L ${x1},${y1} A ${radius},${radius} 0 0,1 ${x2},${y2} Z`;
+      path.setAttribute("d", d);
+      path.setAttribute("fill", `hsl(${i * 60}, 70%, 80%)`);
+      path.setAttribute("opacity", "0.7");
+      svg.appendChild(path);
     }
   }
 };
 
 const addCustomPizzaToCart = () => {
   const flavorCount = parseInt(document.getElementById("flavor-count").value);
-  if (!flavorCount) {
-    showAlertModal("Por favor, selecione a quantidade de sabores!", "Erro");
-    return;
-  }
+  const selectors = document.getElementById("flavor-selectors").children;
+  const flavors = Array.from(selectors)
+    .map((select) => select.value)
+    .filter((value) => value);
 
-  const flavors = [];
-  for (let i = 0; i < flavorCount; i++) {
-    const flavorSelect = document.getElementById(`flavor-select-${i}`);
-    if (flavorSelect && flavorSelect.value) {
-      flavors.push(flavorSelect.value);
-    }
-  }
-
-  // Verifica se todos os sabores foram selecionados
   if (flavors.length !== flavorCount) {
-    showAlertModal(
-      `Por favor, selecione todos os ${flavorCount} sabores para sua pizza personalizada!`,
-      "Erro"
-    );
+    showAlertModal("Por favor, selecione todos os sabores!", "Erro");
     return;
   }
 
-  // Gera um ID único para a pizza personalizada
-  const customPizzaId = "custom-" + Date.now().toString();
-
-  // Calcula o preço com base no sabor mais caro
-  const maxPrice = Math.max(
-    ...flavors.map((flavorId) => {
-      const pizza = pizzas.find((p) => p.id === flavorId);
-      return pizza ? pizza.price : 0;
-    })
-  );
-
-  // Verifica se já existe uma pizza personalizada com os mesmos sabores no carrinho
-  const cartItem = cart.find(
-    (item) =>
-      item.isCustom && JSON.stringify(item.flavors) === JSON.stringify(flavors)
-  );
-  if (cartItem) {
-    cartItem.quantity++;
-  } else {
-    cart.push({ pizzaId: customPizzaId, flavors, quantity: 1, isCustom: true });
-  }
-
-  updateCartCount();
-  renderCart();
+  const customPizzaId = `custom-${Date.now()}`;
+  cart.push({ pizzaId: customPizzaId, isCustom: true, flavors, quantity: 1 });
   saveToLocalStorage();
+  updateCartCount();
   closeCustomPizzaModal();
   showAlertModal("Pizza personalizada adicionada ao carrinho!", "Sucesso");
 };
 
-const renderCarousel = () => {
-  console.log("renderCarousel chamado");
-  const carousel = document.getElementById("carousel-container");
-  if (!carousel) return;
-  carousel.style.width = `${carouselImages.length * 100}%`;
-  carousel.innerHTML = carouselImages
-    .map(
-      (img, index) =>
-        `<img src="${img}" alt="Slide ${
-          index + 1
-        }" class="carousel-slide" style="width: ${
-          100 / carouselImages.length
-        }%;" onerror="this.src='https://via.placeholder.com/600'">`
-    )
-    .join("");
-  updateCarouselPosition();
-};
-
-const updateCarouselPosition = () => {
-  const carousel = document.getElementById("carousel-container");
-  if (!carousel) return;
-  carousel.style.transform = `translateX(-${
-    currentSlide * (100 / carouselImages.length)
-  }%)`;
-};
-
-const startCarousel = () => {
-  clearInterval(slideInterval);
-  if (carouselImages.length > 1) slideInterval = setInterval(nextSlide, 5000);
-};
-
-const nextSlide = () => {
-  currentSlide = (currentSlide + 1) % carouselImages.length;
-  updateCarouselPosition();
-};
-
-const prevSlide = () => {
-  currentSlide =
-    (currentSlide - 1 + carouselImages.length) % carouselImages.length;
-  updateCarouselPosition();
-};
-
-const addCarouselImage = () => {
-  const imageUrl = document.getElementById("carousel-image-input").value.trim();
-  if (imageUrl) {
-    carouselImages.push(imageUrl);
-    saveToLocalStorage();
-    renderCarousel();
-    updateAdminForm();
-    startCarousel();
-  }
-};
-
-const deleteCarouselImage = (index) => {
-  if (confirm("Tem certeza que deseja excluir esta imagem?")) {
-    carouselImages.splice(index, 1);
-    if (currentSlide >= carouselImages.length)
-      currentSlide = carouselImages.length - 1;
-    if (currentSlide < 0) currentSlide = 0;
-    saveToLocalStorage();
-    renderCarousel();
-    updateAdminForm();
-    startCarousel();
-  }
-};
-
 const showProductDetail = (pizzaId) => {
   const pizza = pizzas.find((p) => p.id === pizzaId);
-  if (!pizza) {
-    console.error("Pizza não encontrada com ID:", pizzaId);
-    return;
-  }
+  if (!pizza) return;
+
   selectedPizzaId = pizzaId;
-  const nameElement = document.getElementById("product-detail-name");
-  const imageElement = document.getElementById("product-detail-image");
-  const descriptionElement = document.getElementById(
-    "product-detail-description"
-  );
-  const priceElement = document.getElementById("product-detail-price");
-
-  if (!nameElement || !imageElement || !descriptionElement || !priceElement) {
-    console.error("Elementos do modal de detalhes não encontrados!");
-    return;
-  }
-
-  nameElement.textContent = pizza.name;
-  imageElement.src = pizza.image;
-  imageElement.onerror = () => {
-    console.warn(
-      "Erro ao carregar imagem para pizza:",
-      pizza.name,
-      "URL:",
-      pizza.image
-    );
-    imageElement.src = "https://via.placeholder.com/300";
-  };
-  descriptionElement.textContent =
-    pizza.description || "Descrição não disponível.";
-  priceElement.textContent = formatPrice(pizza.price);
-
   const modal = document.getElementById("product-detail-modal");
-  if (!modal) {
-    console.error("Modal de detalhes do produto não encontrado!");
-    return;
-  }
+  document.getElementById("product-detail-name").textContent = pizza.name;
+  document.getElementById("product-detail-image").src = pizza.image;
+  document.getElementById("product-detail-description").textContent =
+    pizza.description;
+  document.getElementById("product-detail-price").textContent = formatPrice(
+    pizza.price
+  );
   modal.style.display = "block";
   setTimeout(() => modal.classList.add("show"), 10);
 };
@@ -930,13 +848,16 @@ const closeProductDetailModal = () => {
   const modal = document.getElementById("product-detail-modal");
   modal.classList.remove("show");
   setTimeout(() => (modal.style.display = "none"), 300);
+  selectedPizzaId = null;
 };
 
 const addToCartFromDetail = () => {
   if (selectedPizzaId) {
     addToCart(selectedPizzaId);
     closeProductDetailModal();
+    showAlertModal("Pizza adicionada ao carrinho!", "Sucesso");
   }
 };
 
-document.addEventListener("DOMContentLoaded", loadInitialData);
+window.addEventListener("load", loadInitialData);
+window.addEventListener("resize", updateCarousel);
