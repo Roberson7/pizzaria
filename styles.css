@@ -154,6 +154,23 @@ header {
   display: none;
 }
 
+.search-bar {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  border: 1px solid #fff;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  outline: none;
+}
+
+.search-bar:focus {
+  border-color: #f9e8b7;
+  box-shadow: 0 0 5px rgba(249, 232, 183, 0.5);
+}
+
 main {
   padding-top: 150px; /* Mantido o valor ajustado anteriormente */
 }
@@ -842,7 +859,7 @@ footer {
   }
 
   main {
-    padding-top: 180px; /* Aumentado de 150px para 180px para garantir espaço no mobile */
+    padding-top: 200px; /* Aumentado de 180px para 200px para dar espaço à barra de pesquisa */
   }
 
   #products {
