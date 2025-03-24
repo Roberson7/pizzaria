@@ -29,7 +29,7 @@ header {
 .header-left {
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* Reduzido de 1rem para 0.5rem para melhor alinhamento */
+  gap: 0.5rem;
 }
 
 #pizzaria-logo {
@@ -47,7 +47,7 @@ header {
 
 #pizzaria-name {
   font-family: "Playfair Display", serif;
-  font-size: 1.8rem; /* Reduzido de 2rem para 1.8rem para melhor proporção */
+  font-size: 1.8rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -78,7 +78,7 @@ header {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* Reduzido de 1rem para 0.5rem para melhor alinhamento */
+  gap: 0.5rem;
 }
 
 .header-buttons {
@@ -174,7 +174,7 @@ header {
 }
 
 main {
-  padding-top: 150px; /* Ajustado para acomodar a barra de pesquisa */
+  padding-top: 150px;
 }
 
 .carousel {
@@ -214,8 +214,8 @@ main {
   text-align: center;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
-  max-width: 300px; /* Adicionado para limitar a largura máxima no desktop */
-  margin: 0 auto; /* Centraliza o card quando há menos colunas */
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 .product-card:hover {
@@ -535,7 +535,8 @@ footer {
   background: #b32d2d;
 }
 
-#pizza-list p {
+#pizza-list p,
+#order-list p {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -543,7 +544,8 @@ footer {
   border-bottom: 1px solid #eee;
 }
 
-#pizza-list button {
+#pizza-list button,
+#order-list button {
   background: #b32d2d;
   color: white;
   border: none;
@@ -553,16 +555,19 @@ footer {
   margin-left: 0.5rem;
 }
 
-#pizza-list button:first-of-type {
-  background: #e6c84f; /* Cor diferente para o botão "Editar" */
+#pizza-list button:first-of-type,
+#order-list button:first-of-type {
+  background: #e6c84f;
   color: #333;
 }
 
-#pizza-list button:first-of-type:hover {
+#pizza-list button:first-of-type:hover,
+#order-list button:first-of-type:hover {
   background: #f9e8b7;
 }
 
-#pizza-list button:last-of-type:hover {
+#pizza-list button:last-of-type:hover,
+#order-list button:hover:not(:first-of-type) {
   background: #8a1c1c;
 }
 
@@ -880,7 +885,7 @@ footer {
   .product-card {
     padding: 0.5rem;
     min-width: 0;
-    max-width: none; /* Remove o limite no mobile para ocupar a largura total */
+    max-width: none;
   }
 
   .product-card img {
