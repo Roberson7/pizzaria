@@ -754,6 +754,7 @@ const updateFlavorSelectors = () => {
   );
   const selectorsDiv = document.getElementById("flavor-selectors");
   selectorsDiv.innerHTML = "";
+  
   for (let i = 0; i < flavorCount; i++) {
     const ordinal = ["Primeiro", "Segundo", "Terceiro", "Quarto"][i];
     const select = document.createElement("select");
@@ -762,9 +763,39 @@ const updateFlavorSelectors = () => {
       pizzas
         .map((pizza) => `<option value="${pizza.id}">${pizza.name}</option>`)
         .join("");
+    select.addEventListener("change", () => {
+      updateAvailableFlavors(flavorCount);
+      renderPizzaSVG(flavorCount);
+    });
     selectorsDiv.appendChild(select);
   }
   renderPizzaSVG(flavorCount);
+  updateAvailableFlavors(flavorCount);
+};
+
+const updateAvailableFlavors = (flavorCount) => {
+  const selectors = document.getElementById("flavor-selectors").children;
+  const selectedFlavors = Array.from(selectors)
+    .map((select) => select.value)
+    .filter((value) => value);
+
+  Array.from(selectors).forEach((select, index) => {
+    const currentValue = select.value;
+    select.innerHTML = `<option value="" disabled ${
+      !currentValue ? "selected" : ""
+    }>${["Primeiro", "Segundo", "Terceiro", "Quarto"][index]} Sabor</option>`;
+    
+    pizzas.forEach((pizza) => {
+      const isSelectedElsewhere = selectedFlavors.includes(pizza.id) && pizza.id !== currentValue;
+      if (!isSelectedElsewhere) {
+        const option = document.createElement("option");
+        option.value = pizza.id;
+        option.textContent = pizza.name;
+        if (pizza.id === currentValue) option.selected = true;
+        select.appendChild(option);
+      }
+    });
+  });
 };
 
 const renderPizzaSVG = (flavorCount) => {
@@ -784,25 +815,70 @@ const renderPizzaSVG = (flavorCount) => {
   circle.setAttribute("fill", "#f9e8b7");
   svg.appendChild(circle);
 
-  if (flavorCount > 1) {
-    const angleStep = (2 * Math.PI) / flavorCount;
-    for (let i = 0; i < flavorCount; i++) {
-      const startAngle = i * angleStep - Math.PI / 2;
-      const endAngle = (i + 1) * angleStep - Math.PI / 2;
-      const x1 = centerX + radius * Math.cos(startAngle);
-      const y1 = centerY + radius * Math.sin(startAngle);
-      const x2 = centerX + radius * Math.cos(endAngle);
-      const y2 = centerY + radius * Math.sin(endAngle);
+  if (flavorCount > 0) {
+    const selectors = document.getElementById("flavor-selectors").children;
+    const selectedFlavors = Array.from(selectors)
+      .map((select) => select.value)
+      .filter((value) => value);
 
-      const path = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "path"
-      );
-      const d = `M ${centerX},${centerY} L ${x1},${y1} A ${radius},${radius} 0 0,1 ${x2},${y2} Z`;
-      path.setAttribute("d", d);
-      path.setAttribute("fill", `hsl(${i * 60}, 70%, 80%)`);
-      path.setAttribute("opacity", "0.7");
-      svg.appendChild(path);
+    if (selectedFlavors.length > 0 && flavorCount > 1) {
+      const angleStep = (2 * Math.PI) / flavorCount;
+      selectedFlavors.forEach((flavorId, i) => {
+        const pizza = pizzas.find((p) => p.id === flavorId);
+        if (!pizza) return;
+
+        const startAngle = i * angleStep - Math.PI / 2;
+        const endAngle = (i + 1) * angleStep - Math.PI / 2;
+
+        // Criar um clipping path para a fatia
+        const clipPath = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "clipPath"
+        );
+        clipPath.setAttribute("id", `clip-${i}`);
+        const path = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
+        const x1 = centerX + radius * Math.cos(startAngle);
+        const y1 = centerY + radius * Math.sin(startAngle);
+        const x2 = centerX + radius * Math.cos(endAngle);
+        const y2 = centerY + radius * Math.sin(endAngle);
+        const d = `M ${centerX},${centerY} L ${x1},${y1} A ${radius},${radius} 0 0,1 ${x2},${y2} Z`;
+        path.setAttribute("d", d);
+        clipPath.appendChild(path);
+        svg.appendChild(clipPath);
+
+        // Adicionar a imagem com o clip-path
+        const image = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "image"
+        );
+        image.setAttribute("href", pizza.image);
+        image.setAttribute("x", centerX - radius);
+        image.setAttribute("y", centerY - radius);
+        image.setAttribute("width", radius * 2);
+        image.setAttribute("height", radius * 2);
+        image.setAttribute("clip-path", `url(#clip-${i})`);
+        image.setAttribute("preserveAspectRatio", "xMidYMid slice");
+        svg.appendChild(image);
+      });
+    } else if (selectedFlavors.length === 1) {
+      // Caso de apenas um sabor, preenche o círculo inteiro
+      const pizza = pizzas.find((p) => p.id === selectedFlavors[0]);
+      if (pizza) {
+        const image = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "image"
+        );
+        image.setAttribute("href", pizza.image);
+        image.setAttribute("x", centerX - radius);
+        image.setAttribute("y", centerY - radius);
+        image.setAttribute("width", radius * 2);
+        image.setAttribute("height", radius * 2);
+        image.setAttribute("preserveAspectRatio", "xMidYMid slice");
+        svg.appendChild(image);
+      }
     }
   }
 };
