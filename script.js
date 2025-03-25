@@ -805,6 +805,7 @@ const renderPizzaSVG = (flavorCount) => {
   const centerX = 100;
   const centerY = 100;
 
+  // Desenhar o círculo base
   const circle = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "circle"
@@ -821,64 +822,76 @@ const renderPizzaSVG = (flavorCount) => {
       .map((select) => select.value)
       .filter((value) => value);
 
-    if (selectedFlavors.length > 0 && flavorCount > 1) {
-      const angleStep = (2 * Math.PI) / flavorCount;
+    if (selectedFlavors.length > 0) {
+      const angleStep = (2 * Math.PI) / Math.max(flavorCount, selectedFlavors.length);
+
       selectedFlavors.forEach((flavorId, i) => {
         const pizza = pizzas.find((p) => p.id === flavorId);
         if (!pizza) return;
 
-        const startAngle = i * angleStep - Math.PI / 2;
-        const endAngle = (i + 1) * angleStep - Math.PI / 2;
+        if (flavorCount === 1) {
+          // Caso de 1 sabor: preenche o círculo inteiro
+          const image = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "image"
+          );
+          image.setAttribute("href", pizza.image);
+          image.setAttribute("x", centerX - radius);
+          image.setAttribute("y", centerY - radius);
+          image.setAttribute("width", radius * 2);
+          image.setAttribute("height", radius * 2);
+          image.setAttribute("preserveAspectRatio", "xMidYMid slice");
+          svg.appendChild(image);
+        } else {
+          // Caso de múltiplos sabores: divide em fatias
+          const startAngle = i * angleStep - Math.PI / 2;
+          const endAngle = (i + 1) * angleStep - Math.PI / 2;
 
-        // Criar um clipping path para a fatia
-        const clipPath = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "clipPath"
-        );
-        clipPath.setAttribute("id", `clip-${i}`);
-        const path = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "path"
-        );
-        const x1 = centerX + radius * Math.cos(startAngle);
-        const y1 = centerY + radius * Math.sin(startAngle);
-        const x2 = centerX + radius * Math.cos(endAngle);
-        const y2 = centerY + radius * Math.sin(endAngle);
-        const d = `M ${centerX},${centerY} L ${x1},${y1} A ${radius},${radius} 0 0,1 ${x2},${y2} Z`;
-        path.setAttribute("d", d);
-        clipPath.appendChild(path);
-        svg.appendChild(clipPath);
+          // Criar um clipping path para a fatia
+          const clipPath = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "clipPath"
+          );
+          clipPath.setAttribute("id", `clip-${i}`);
+          const path = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+          );
+          const x1 = centerX + radius * Math.cos(startAngle);
+          const y1 = centerY + radius * Math.sin(startAngle);
+          const x2 = centerX + radius * Math.cos(endAngle);
+          const y2 = centerY + radius * Math.sin(endAngle);
+          const d = `M ${centerX},${centerY} L ${x1},${y1} A ${radius},${radius} 0 0,1 ${x2},${y2} Z`;
+          path.setAttribute("d", d);
+          clipPath.appendChild(path);
+          svg.appendChild(clipPath);
 
-        // Adicionar a imagem com o clip-path
-        const image = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "image"
-        );
-        image.setAttribute("href", pizza.image);
-        image.setAttribute("x", centerX - radius);
-        image.setAttribute("y", centerY - radius);
-        image.setAttribute("width", radius * 2);
-        image.setAttribute("height", radius * 2);
-        image.setAttribute("clip-path", `url(#clip-${i})`);
-        image.setAttribute("preserveAspectRatio", "xMidYMid slice");
-        svg.appendChild(image);
+          // Adicionar a imagem com o clip-path
+          const image = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "image"
+          );
+          image.setAttribute("href", pizza.image);
+          image.setAttribute("x", centerX - radius);
+          image.setAttribute("y", centerY - radius);
+          image.setAttribute("width", radius * 2);
+          image.setAttribute("height", radius * 2);
+          image.setAttribute("clip-path", `url(#clip-${i})`);
+          image.setAttribute("preserveAspectRatio", "xMidYMid slice");
+          svg.appendChild(image);
+
+          // Adicionar borda à fatia (opcional, para visualização clara)
+          const borderPath = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+          );
+          borderPath.setAttribute("d", d);
+          borderPath.setAttribute("fill", "none");
+          borderPath.setAttribute("stroke", "#000");
+          borderPath.setAttribute("stroke-width", "1");
+          svg.appendChild(borderPath);
+        }
       });
-    } else if (selectedFlavors.length === 1) {
-      // Caso de apenas um sabor, preenche o círculo inteiro
-      const pizza = pizzas.find((p) => p.id === selectedFlavors[0]);
-      if (pizza) {
-        const image = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "image"
-        );
-        image.setAttribute("href", pizza.image);
-        image.setAttribute("x", centerX - radius);
-        image.setAttribute("y", centerY - radius);
-        image.setAttribute("width", radius * 2);
-        image.setAttribute("height", radius * 2);
-        image.setAttribute("preserveAspectRatio", "xMidYMid slice");
-        svg.appendChild(image);
-      }
     }
   }
 };
