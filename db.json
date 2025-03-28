@@ -1,0 +1,48 @@
+{
+  "pizzas": [
+    {
+      "id": "1",
+      "name": "Margherita",
+      "price": 35.9,
+      "description": "Molho de tomate, muçarela e manjericão.",
+      "image": "https://images.unsplash.com/photo-1604068549290-dea0e4b45da1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+      "category": "Pizzas Tradicionais"
+    },
+    {
+      "id": "2",
+      "name": "Calabresa",
+      "price": 38.9,
+      "description": "Molho de tomate, calabresa e cebola.",
+      "image": "https://images.unsplash.com/photo-1627627331051-703813f99b14?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+      "category": "Pizzas Tradicionais"
+    },
+    {
+      "id": "3",
+      "name": "Chocolate",
+      "price": 42.0,
+      "description": "Chocolate derretido e granulado.",
+      "image": "https://images.unsplash.com/photo-1595877175789-795d5cc88537?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+      "category": "Pizzas Doces"
+    }
+  ],
+  "categories": ["Pizzas Tradicionais", "Pizzas Doces", "Pizzas Salgadas"],
+  "cart": [],
+  "carouselImages": [
+    {
+      "id": "1",
+      "url": "https://images.unsplash.com/photo-1594007654729-407eedc4be65?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": "2",
+      "url": "https://images.unsplash.com/photo-1571066811602-716837d9f582?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+    }
+  ],
+  "pizzariaConfig": {
+    "name": "Pizzaria Sabor da Itália",
+    "logo": "https://via.placeholder.com/60",
+    "whatsapp": "5511999999999",
+    "adminPassword": "Gcipione",
+    "address": "Rua Icarai, 310 - Vila do Conde - Barueri"
+  },
+  "orders": []
+}
