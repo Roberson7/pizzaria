@@ -82,16 +82,6 @@ function loadCarousel() {
   container.innerHTML = data.carouselImages
     .map((img) => `<img src="${img.url}" alt="Carrossel ${img.id}">`)
     .join("");
-  let currentIndex = 0;
-  const images = container.getElementsByTagName("img");
-  setInterval(() => {
-    images[currentIndex].style.display = "none";
-    currentIndex = (currentIndex + 1) % images.length;
-    images[currentIndex].style.display = "block";
-  }, 3000);
-  for (let i = 1; i < images.length; i++) {
-    images[i].style.display = "none";
-  }
 }
 
 // Categorias no menu
@@ -128,7 +118,7 @@ function loadProducts(category = null) {
     .join("");
 }
 
-// Filtro por categoria
+// Filtro por categoria (função placeholder, pode ser ajustada conforme seu CSS original)
 function filterProducts(category) {
   loadProducts(category);
 }
@@ -245,16 +235,12 @@ document.getElementById("checkout-form").addEventListener("submit", (e) => {
     items: [...cart],
     payment: document.getElementById("payment-method").value,
     total: cart.reduce((sum, item) => sum + item.price, 0),
-    date: new Date().toLocaleString("pt-BR"),
   };
   data.orders.push(order);
   cart = [];
   updateCart();
   closeCheckoutModal();
-  showAlert(
-    "Pedido Confirmado",
-    `Seu pedido foi enviado com sucesso! Entre em contato pelo WhatsApp: ${data.pizzariaConfig.whatsapp}`
-  );
+  showAlert("Pedido Confirmado", "Seu pedido foi enviado com sucesso!");
 });
 
 // Modal de Alerta
@@ -299,19 +285,9 @@ function loadAdminForm() {
             .map(
               (order, index) => `
       <div>
-        <p><strong>Cliente:</strong> ${order.customer.name}</p>
-        <p><strong>Telefone:</strong> ${order.customer.phone}</p>
-        <p><strong>Endereço:</strong> ${order.customer.address}</p>
-        <p><strong>Itens:</strong> ${order.items
-          .map((item) => item.name)
-          .join(", ")}</p>
-        <p><strong>Total:</strong> R$ ${order.total
-          .toFixed(2)
-          .replace(".", ",")}</p>
-        <p><strong>Pagamento:</strong> ${order.payment}</p>
-        <p><strong>Data:</strong> ${order.date}</p>
+        <p>Cliente: ${order.customer.name}</p>
+        <p>Total: R$ ${order.total.toFixed(2).replace(".", ",")}</p>
       </div>
-      <hr>
     `
             )
             .join("")
@@ -331,13 +307,9 @@ function showAdminLogin() {
 
 function resetPassword() {
   const newPassword = document.getElementById("new-password").value;
-  if (newPassword) {
-    data.pizzariaConfig.adminPassword = newPassword;
-    showAlert("Sucesso", "Senha redefinida com sucesso!");
-    showAdminLogin();
-  } else {
-    showAlert("Erro", "Por favor, insira uma nova senha!");
-  }
+  data.pizzariaConfig.adminPassword = newPassword;
+  showAlert("Sucesso", "Senha redefinida com sucesso!");
+  showAdminLogin();
 }
 
 // Menu Mobile
@@ -369,42 +341,13 @@ function updateFlavorSelectors() {
       </select>
     `;
   }
-  updatePizzaSVG(count);
-}
-
-function updatePizzaSVG(count) {
-  const svg = document.getElementById("pizza-svg");
-  svg.innerHTML = "";
-  const radius = 100;
-  const center = 100;
-  const slices = count ? parseInt(count) : 1;
-  for (let i = 0; i < slices; i++) {
-    const angle = (i * 360) / slices;
-    const nextAngle = ((i + 1) * 360) / slices;
-    const x1 = center + radius * Math.cos((angle * Math.PI) / 180);
-    const y1 = center + radius * Math.sin((angle * Math.PI) / 180);
-    const x2 = center + radius * Math.cos((nextAngle * Math.PI) / 180);
-    const y2 = center + radius * Math.sin((nextAngle * Math.PI) / 180);
-    const largeArc = slices > 2 ? 1 : 0;
-    svg.innerHTML += `
-      <path d="M ${center},${center} L ${x1},${y1} A ${radius},${radius} 0 ${largeArc},1 ${x2},${y2} Z" fill="#ffd700" stroke="#8b0000" stroke-width="2"/>
-    `;
-  }
 }
 
 function addCustomPizzaToCart() {
   const count = document.getElementById("flavor-count").value;
-  if (!count) {
-    showAlert("Erro", "Escolha a quantidade de sabores!");
-    return;
-  }
   let customPizza = { name: "Pizza Personalizada", price: 0, flavors: [] };
   for (let i = 0; i < count; i++) {
     const pizzaId = document.getElementById(`flavor-${i}`).value;
-    if (!pizzaId) {
-      showAlert("Erro", "Escolha todos os sabores!");
-      return;
-    }
     const pizza = data.pizzas.find((p) => p.id === pizzaId);
     customPizza.flavors.push(pizza.name);
     customPizza.price += pizza.price / count;
