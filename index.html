@@ -38,7 +38,13 @@
           <ul id="nav-list" class="nav-list"></ul>
         </nav>
       </div>
-      <input type="text" id="search-bar" class="search-bar" placeholder="Pesquisar pizzas..." oninput="searchPizzas()">
+      <input
+        type="text"
+        id="search-bar"
+        class="search-bar"
+        placeholder="Pesquisar pizzas..."
+        oninput="searchPizzas()"
+      />
       <div class="mobile-only">
         <p id="mobile-address">Rua Icarai, 310 - Vila do Conde - Barueri</p>
       </div>
@@ -118,14 +124,14 @@
             Esqueci a senha
           </button>
         </div>
-        <div id="admin-reset">
+        <div id="admin-reset" style="display: none;">
           <h2>Redefinir Senha</h2>
           <input type="text" id="reset-keyword" placeholder="Palavra-chave" />
           <input type="password" id="new-password" placeholder="Nova Senha" />
           <button onclick="resetPassword()">Redefinir</button>
           <button class="close-btn" onclick="showAdminLogin()">Voltar</button>
         </div>
-        <div id="admin-form"></div>
+        <div id="admin-form" style="display: none;"></div>
       </div>
     </div>
 
