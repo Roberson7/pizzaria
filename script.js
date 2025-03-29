@@ -39,6 +39,7 @@ const initialData = {
     logo: "https://via.placeholder.com/60",
     whatsapp: "5511999999999",
     adminPassword: "gcipione",
+    ordersPassword: "Gcipione",
     address: "Rua Icarai, 310 - Vila do Conde - Barueri",
   },
 };
@@ -106,8 +107,11 @@ const saveToLocalStorage = () => {
 const loadInitialData = () => {
   if (!pizzariaConfig.adminPassword) {
     pizzariaConfig.adminPassword = "gcipione";
-    saveToLocalStorage();
   }
+  if (!pizzariaConfig.ordersPassword) {
+    pizzariaConfig.ordersPassword = "Gcipione";
+  }
+  saveToLocalStorage();
   updatePizzariaDisplay();
   renderNavbar();
   renderCarousel();
@@ -511,23 +515,6 @@ const updateAdminForm = () => {
     }" placeholder="Número do WhatsApp (ex: 5511999999999)">
     <button onclick="updatePizzaria()">Atualizar Configurações</button>
 
-    <h3>Pedidos dos Clientes</h3>
-    <div id="order-list">
-      ${orders
-        .map(
-          (order, index) => `
-            <p>
-              <strong>Pedido #${order.id}</strong> - ${order.customer.name} - ${
-            order.date
-          } - ${formatPrice(order.total)} - Status: ${order.status}
-              <button onclick="showOrderDetails(${index})">Ver Detalhes</button>
-              <button onclick="updateOrderStatus(${index}, 'Entregue')">Marcar como Entregue</button>
-            </p>
-          `
-        )
-        .join("")}
-    </div>
-
     <h3>${
       editingPizzaIndex !== null ? "Editar Pizza" : "Adicionar Nova Pizza"
     }</h3>
@@ -684,38 +671,97 @@ const deleteCarouselImage = (index) => {
   showAlertModal("Imagem excluída do carrossel!", "Sucesso");
 };
 
-const showOrderDetails = (index) => {
-  const order = orders[index];
-  const details = `
-    <p><strong>Cliente:</strong> ${order.customer.name}</p>
-    <p><strong>Telefone:</strong> ${formatPhoneNumber(order.customer.phone)}</p>
-    <p><strong>Endereço:</strong> ${order.customer.address}</p>
-    <p><strong>Pagamento:</strong> ${order.customer.payment}</p>
-    <p><strong>Itens:</strong></p>
-    ${order.items
-      .map(
-        (item) =>
-          `<p>- ${item.name} (${item.quantity}x) - ${formatPrice(item.total)}${
-            item.flavors ? "<br>" + item.flavors : ""
-          }</p>`
-      )
-      .join("")}
-    <p><strong>Total:</strong> ${formatPrice(order.total)}</p>
-    <p><strong>Data:</strong> ${order.date}</p>
-    <p><strong>Status:</strong> ${order.status}</p>
+const openOrdersModal = () => {
+  const modal = document.getElementById("orders-modal");
+  modal.style.display = "block";
+  setTimeout(() => modal.classList.add("show"), 10);
+  showOrdersLogin();
+};
+
+const closeOrdersModal = () => {
+  const modal = document.getElementById("orders-modal");
+  modal.classList.remove("show");
+  setTimeout(() => (modal.style.display = "none"), 300);
+};
+
+const showOrdersLogin = () => {
+  document.getElementById("orders-login").style.display = "block";
+  document.getElementById("orders-reset").style.display = "none";
+  document.getElementById("orders-list").style.display = "none";
+};
+
+const showOrdersResetPassword = () => {
+  document.getElementById("orders-login").style.display = "none";
+  document.getElementById("orders-reset").style.display = "block";
+  document.getElementById("orders-list").style.display = "none";
+};
+
+const ordersLogin = () => {
+  const password = document.getElementById("orders-password").value;
+  if (password === pizzariaConfig.ordersPassword) {
+    document.getElementById("orders-login").style.display = "none";
+    document.getElementById("orders-list").style.display = "block";
+    updateOrdersList();
+  } else {
+    showAlertModal("Senha incorreta!", "Erro");
+  }
+};
+
+const resetOrdersPassword = () => {
+  const keyword = document.getElementById("orders-reset-keyword").value;
+  const newPassword = document.getElementById("orders-new-password").value;
+  if (keyword === "gabriel") {
+    if (newPassword) {
+      pizzariaConfig.ordersPassword = newPassword;
+      saveToLocalStorage();
+      showAlertModal("Senha redefinida com sucesso!", "Sucesso");
+      showOrdersLogin();
+    } else {
+      showAlertModal("Por favor, insira uma nova senha!", "Erro");
+    }
+  } else {
+    showAlertModal("Chave de recuperação incorreta!", "Erro");
+  }
+};
+
+const updateOrdersList = () => {
+  const ordersList = document.getElementById("orders-list");
+  ordersList.innerHTML = `
+    <h2>Pedidos dos Clientes</h2>
+    <div>
+      ${orders
+        .map(
+          (order, index) => `
+            <p>
+              <strong>Pedido #${String(index + 1).padStart(
+                2,
+                "0"
+              )}</strong> - ${order.customer.name} - ${
+            order.date
+          } - ${formatPrice(order.total)} - Status: ${order.status}
+              <button onclick="updateOrderStatus(${index}, 'Entregue')">Marcar como Entregue</button>
+            </p>
+          `
+        )
+        .join("")}
+    </div>
+    <button class="close-btn" onclick="closeOrdersModal()">Fechar</button>
   `;
-  showAlertModal(details, `Detalhes do Pedido #${order.id}`);
 };
 
 const updateOrderStatus = (index, status) => {
   orders[index].status = status;
+  if (status === "Entregue") {
+    orders.splice(index, 1); // Remove o pedido da lista
+    showAlertModal(`Pedido entregue e removido da lista!`, "Sucesso");
+  } else {
+    showAlertModal(`Status do pedido atualizado para "${status}"!`, "Sucesso");
+  }
   saveToLocalStorage();
-  updateAdminForm();
-  showAlertModal(
-    `Status do pedido #${orders[index].id} atualizado para "${status}"!`,
-    "Sucesso"
-  );
+  updateOrdersList();
 };
+
+// Função removida: showOrderDetails (não é mais necessária)
 
 const renderCarousel = () => {
   const container = document.getElementById("carousel-container");
