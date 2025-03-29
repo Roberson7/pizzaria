@@ -103,7 +103,8 @@ header {
   background: #fff;
 }
 
-.admin-icon {
+.admin-icon,
+.orders-icon {
   background: none;
   border: none;
   color: #fff;
@@ -113,7 +114,8 @@ header {
   transition: color 0.3s;
 }
 
-.admin-icon:hover {
+.admin-icon:hover,
+.orders-icon:hover {
   color: #f9e8b7;
 }
 
@@ -362,14 +364,16 @@ footer {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.admin-box {
+.admin-box,
+.orders-box {
   background: #fff;
   border: 2px solid #8a1c1c;
   border-radius: 15px;
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
 }
 
-.admin-box h2 {
+.admin-box h2,
+.orders-box h2 {
   color: #8a1c1c;
   font-family: "Playfair Display", serif;
   text-align: center;
@@ -487,26 +491,35 @@ footer {
 
 #admin-login,
 #admin-reset,
-#admin-form {
+#admin-form,
+#orders-login,
+#orders-reset,
+#orders-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
 #admin-reset,
-#admin-form {
+#admin-form,
+#orders-reset,
+#orders-list {
   display: none;
 }
 
 #admin-login input,
-#admin-reset input {
+#admin-reset input,
+#orders-login input,
+#orders-reset input {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
 #admin-login button,
-#admin-reset button {
+#admin-reset button,
+#orders-login button,
+#orders-reset button {
   background: #8a1c1c;
   color: white;
   border: none;
@@ -516,7 +529,9 @@ footer {
 }
 
 #admin-login button:hover,
-#admin-reset button:hover {
+#admin-reset button:hover,
+#orders-login button:hover,
+#orders-reset button:hover {
   background: #b32d2d;
 }
 
@@ -533,7 +548,8 @@ footer {
   margin-top: 1rem;
 }
 
-#admin-form h3 {
+#admin-form h3,
+#orders-list h3 {
   margin-top: 1rem;
   color: #8a1c1c;
 }
@@ -547,7 +563,8 @@ footer {
   width: 100%;
 }
 
-#admin-form button {
+#admin-form button,
+#orders-list button {
   background: #8a1c1c;
   color: white;
   border: none;
@@ -557,12 +574,13 @@ footer {
   margin-bottom: 1rem;
 }
 
-#admin-form button:hover {
+#admin-form button:hover,
+#orders-list button:hover {
   background: #b32d2d;
 }
 
 #pizza-list p,
-#order-list p {
+#orders-list p {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -571,7 +589,7 @@ footer {
 }
 
 #pizza-list button,
-#order-list button {
+#orders-list button {
   background: #b32d2d;
   color: white;
   border: none;
@@ -581,19 +599,16 @@ footer {
   margin-left: 0.5rem;
 }
 
-#pizza-list button:first-of-type,
-#order-list button:first-of-type {
+#pizza-list button:first-of-type {
   background: #e6c84f;
   color: #333;
 }
 
-#pizza-list button:first-of-type:hover,
-#order-list button:first-of-type:hover {
+#pizza-list button:first-of-type:hover {
   background: #f9e8b7;
 }
 
-#pizza-list button:last-of-type:hover,
-#order-list button:hover:not(:first-of-type) {
+#pizza-list button:last-of-type:hover {
   background: #8a1c1c;
 }
 
