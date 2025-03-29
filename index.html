@@ -31,7 +31,7 @@
           <button class="cart-btn" onclick="toggleCart()">
             🛒 Carrinho <span id="cart-count">0</span>
           </button>
-          <button class="admin-btn" onclick="openAdminModal()">Admin</button>
+          <button class="admin-icon" onclick="openAdminModal()">🔒</button>
         </div>
         <nav class="navbar">
           <button class="menu-btn" onclick="toggleMenu()">☰</button>
@@ -114,7 +114,7 @@
     </div>
 
     <div id="admin-modal" class="modal">
-      <div class="modal-content">
+      <div class="modal-content admin-box">
         <span class="close" onclick="closeAdminModal()">×</span>
         <div id="admin-login">
           <h2>Login do Administrador</h2>
@@ -126,7 +126,7 @@
         </div>
         <div id="admin-reset" style="display: none">
           <h2>Redefinir Senha</h2>
-          <input type="text" id="reset-keyword" placeholder="Palavra-chave" />
+          <input type="text" id="reset-keyword" placeholder="Chave de Recuperação" />
           <input type="password" id="new-password" placeholder="Nova Senha" />
           <button onclick="resetPassword()">Redefinir</button>
           <button class="close-btn" onclick="showAdminLogin()">Voltar</button>
