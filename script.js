@@ -38,7 +38,7 @@ const initialData = {
     name: "Pizzaria Sabor da Itália",
     logo: "https://via.placeholder.com/60",
     whatsapp: "5511999999999",
-    adminPassword: "Gcipione",
+    adminPassword: "gcipione",
     address: "Rua Icarai, 310 - Vila do Conde - Barueri",
   },
 };
@@ -105,7 +105,7 @@ const saveToLocalStorage = () => {
 
 const loadInitialData = () => {
   if (!pizzariaConfig.adminPassword) {
-    pizzariaConfig.adminPassword = "Gcipione";
+    pizzariaConfig.adminPassword = "gcipione";
     saveToLocalStorage();
   }
   updatePizzariaDisplay();
@@ -478,7 +478,7 @@ const adminLogin = () => {
 const resetPassword = () => {
   const keyword = document.getElementById("reset-keyword").value;
   const newPassword = document.getElementById("new-password").value;
-  if (keyword === "chave") {
+  if (keyword === "cavese") {
     if (newPassword) {
       pizzariaConfig.adminPassword = newPassword;
       saveToLocalStorage();
@@ -488,7 +488,7 @@ const resetPassword = () => {
       showAlertModal("Por favor, insira uma nova senha!", "Erro");
     }
   } else {
-    showAlertModal("Palavra-chave incorreta!", "Erro");
+    showAlertModal("Chave de recuperação incorreta!", "Erro");
   }
 };
 
@@ -818,7 +818,6 @@ const renderPizzaSVG = (flavorCount) => {
   const centerX = 100;
   const centerY = 100;
 
-  // Desenhar o círculo base
   const circle = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "circle"
@@ -844,7 +843,6 @@ const renderPizzaSVG = (flavorCount) => {
         if (!pizza) return;
 
         if (flavorCount === 1) {
-          // Caso de 1 sabor: preenche o círculo inteiro
           const image = document.createElementNS(
             "http://www.w3.org/2000/svg",
             "image"
@@ -857,11 +855,9 @@ const renderPizzaSVG = (flavorCount) => {
           image.setAttribute("preserveAspectRatio", "xMidYMid slice");
           svg.appendChild(image);
         } else {
-          // Caso de múltiplos sabores: divide em fatias
           const startAngle = i * angleStep - Math.PI / 2;
           const endAngle = (i + 1) * angleStep - Math.PI / 2;
 
-          // Criar um clipping path para a fatia
           const clipPath = document.createElementNS(
             "http://www.w3.org/2000/svg",
             "clipPath"
@@ -880,7 +876,6 @@ const renderPizzaSVG = (flavorCount) => {
           clipPath.appendChild(path);
           svg.appendChild(clipPath);
 
-          // Adicionar a imagem com o clip-path
           const image = document.createElementNS(
             "http://www.w3.org/2000/svg",
             "image"
@@ -894,7 +889,6 @@ const renderPizzaSVG = (flavorCount) => {
           image.setAttribute("preserveAspectRatio", "xMidYMid slice");
           svg.appendChild(image);
 
-          // Adicionar borda à fatia (opcional, para visualização clara)
           const borderPath = document.createElementNS(
             "http://www.w3.org/2000/svg",
             "path"
