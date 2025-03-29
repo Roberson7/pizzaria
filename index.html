@@ -32,6 +32,7 @@
             🛒 Carrinho <span id="cart-count">0</span>
           </button>
           <button class="admin-icon" onclick="openAdminModal()">🔒</button>
+          <button class="orders-icon" onclick="openOrdersModal()">📋</button>
         </div>
         <nav class="navbar">
           <button class="menu-btn" onclick="toggleMenu()">☰</button>
@@ -126,12 +127,46 @@
         </div>
         <div id="admin-reset" style="display: none">
           <h2>Redefinir Senha</h2>
-          <input type="text" id="reset-keyword" placeholder="Chave de Recuperação" />
+          <input
+            type="text"
+            id="reset-keyword"
+            placeholder="Chave de Recuperação"
+          />
           <input type="password" id="new-password" placeholder="Nova Senha" />
           <button onclick="resetPassword()">Redefinir</button>
           <button class="close-btn" onclick="showAdminLogin()">Voltar</button>
         </div>
         <div id="admin-form" style="display: none"></div>
+      </div>
+    </div>
+
+    <div id="orders-modal" class="modal">
+      <div class="modal-content orders-box">
+        <span class="close" onclick="closeOrdersModal()">×</span>
+        <div id="orders-login">
+          <h2>Login dos Pedidos</h2>
+          <input type="password" id="orders-password" placeholder="Senha" />
+          <button onclick="ordersLogin()">Entrar</button>
+          <button class="forgot-password" onclick="showOrdersResetPassword()">
+            Esqueci a senha
+          </button>
+        </div>
+        <div id="orders-reset" style="display: none">
+          <h2>Redefinir Senha</h2>
+          <input
+            type="text"
+            id="orders-reset-keyword"
+            placeholder="Chave de Recuperação"
+          />
+          <input
+            type="password"
+            id="orders-new-password"
+            placeholder="Nova Senha"
+          />
+          <button onclick="resetOrdersPassword()">Redefinir</button>
+          <button class="close-btn" onclick="showOrdersLogin()">Voltar</button>
+        </div>
+        <div id="orders-list" style="display: none"></div>
       </div>
     </div>
 
