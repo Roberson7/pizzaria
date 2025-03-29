@@ -86,8 +86,7 @@ header {
   gap: 0.5rem;
 }
 
-.cart-btn,
-.admin-btn {
+.cart-btn {
   background: #f9e8b7;
   border: none;
   padding: 0.5rem 1rem;
@@ -100,9 +99,22 @@ header {
   transition: background 0.3s;
 }
 
-.cart-btn:hover,
-.admin-btn:hover {
+.cart-btn:hover {
   background: #fff;
+}
+
+.admin-icon {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.3s;
+}
+
+.admin-icon:hover {
+  color: #f9e8b7;
 }
 
 #cart-count {
@@ -348,6 +360,20 @@ footer {
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.admin-box {
+  background: #fff;
+  border: 2px solid #8a1c1c;
+  border-radius: 15px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.admin-box h2 {
+  color: #8a1c1c;
+  font-family: "Playfair Display", serif;
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .close {
